@@ -7,6 +7,7 @@ import type {
   RegisterData,
   UpdateUserData,
   ForgotPasswordData,
+  ResetPasswordData,
 } from "../types/auth.types.js";
 
 interface AuthState {
@@ -24,6 +25,7 @@ interface AuthState {
   
   // Recuperación de contraseña
   forgotPassword: (data: ForgotPasswordData) => Promise<void>;
+  resetPassword: (data: ResetPasswordData) => Promise<void>;
   
   // Gestión de cuenta
   updateUser: (data: UpdateUserData) => Promise<void>;
@@ -115,6 +117,22 @@ const useUserStore = create<AuthState>()(
           set({ isLoading: false });
         } catch (error: unknown) {
           const errorMessage = error instanceof Error ? error.message : "Error al enviar correo de recuperación";
+          set({
+            error: errorMessage,
+            isLoading: false,
+          });
+          throw error;
+        }
+      },
+
+      // Resetear contraseña
+      resetPassword: async (data: ResetPasswordData) => {
+        set({ isLoading: true, error: null });
+        try {
+          await authService.resetPassword(data);
+          set({ isLoading: false });
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : "Error al resetear la contraseña";
           set({
             error: errorMessage,
             isLoading: false,

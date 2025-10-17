@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import Input from "../components/Input";
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
 
 const ForgotPassword: React.FC = () => {

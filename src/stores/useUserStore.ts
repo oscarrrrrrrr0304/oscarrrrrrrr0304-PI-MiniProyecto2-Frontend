@@ -95,21 +95,16 @@ const useUserStore = create<AuthState>()(
 
       // Logout
       logout: async () => {
-        set({ isLoading: true });
-        try {
-          await authService.logout();
-        } catch (error) {
-          console.error("Error en logout:", error);
-        } finally {
-          localStorage.removeItem("token");
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: null,
-          });
-        }
+        // Con JWT no necesitamos llamar al backend
+        // Solo limpiamos el estado local y el token
+        localStorage.removeItem("token");
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: null,
+        });
       },
 
       // Recuperación de contraseña
@@ -130,11 +125,30 @@ const useUserStore = create<AuthState>()(
 
       // Actualizar usuario
       updateUser: async (data: UpdateUserData) => {
+        const state = useUserStore.getState();
+        const userId = state.user?.id;
+        const currentUser = state.user;
+        
+        if (!userId || !currentUser) {
+          throw new Error("No se encontró el usuario. Por favor, vuelve a iniciar sesión.");
+        }
+
         set({ isLoading: true, error: null });
         try {
-          const updatedUser = await authService.updateUser(data);
+          const updatedUser = await authService.updateUser(userId, data);
+          
+          // Crear un nuevo objeto de usuario con los datos actualizados
+          // Usamos los datos del backend si existen, sino mantenemos los actuales
+          const newUserData: User = {
+            id: userId,
+            name: updatedUser.name ?? data.name ?? currentUser.name,
+            email: updatedUser.email ?? data.email ?? currentUser.email,
+            age: updatedUser.age ?? data.age ?? currentUser.age,
+          };
+          
+          // Actualizar el estado con un nuevo objeto para forzar la re-renderización
           set({
-            user: updatedUser,
+            user: { ...newUserData }, // Crear una nueva referencia del objeto
             isLoading: false,
             error: null,
           });
@@ -150,9 +164,16 @@ const useUserStore = create<AuthState>()(
 
       // Eliminar cuenta
       deleteAccount: async () => {
+        const state = useUserStore.getState();
+        const currentUser = state.user;
+        
+        if (!currentUser || !currentUser.id) {
+          throw new Error("No se encontró el usuario. Por favor, vuelve a iniciar sesión.");
+        }
+
         set({ isLoading: true, error: null });
         try {
-          await authService.deleteAccount();
+          await authService.deleteAccount(currentUser);
           localStorage.removeItem("token");
           set({
             user: null,
@@ -173,9 +194,19 @@ const useUserStore = create<AuthState>()(
 
       // Verificar token (auto-login)
       verifyToken: async () => {
+        const state = useUserStore.getState();
         const token = localStorage.getItem("token");
+        
+        // Si no hay token, marcar como no autenticado
         if (!token) {
           set({ isAuthenticated: false, isLoading: false });
+          return;
+        }
+
+        // Si ya hay un usuario en el estado (de la persistencia), no hacer nada
+        if (state.user && state.isAuthenticated) {
+          console.log("Usuario ya autenticado desde persistencia:", state.user);
+          set({ isLoading: false });
           return;
         }
 
@@ -189,15 +220,21 @@ const useUserStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
-        } catch {
-          localStorage.removeItem("token");
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: null,
-          });
+        } catch (error) {
+          console.error("Error al verificar token:", error);
+          // Solo limpiar si realmente falla la verificación
+          // Comentamos esto para no cerrar sesión automáticamente
+          // localStorage.removeItem("token");
+          // set({
+          //   user: null,
+          //   token: null,
+          //   isAuthenticated: false,
+          //   isLoading: false,
+          //   error: null,
+          // });
+          
+          // En su lugar, mantener el estado actual de la persistencia
+          set({ isLoading: false });
         }
       },
 

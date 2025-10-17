@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
         ) : (
           <div className="w-20"></div>
         )}
-        <h1 className="text-white text-xl font-bold">Demo Movies</h1>
+        <img src="./images/logo.png" alt="logo.png" className="w-16 h-16 object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
         <div className="w-16"></div>
       </nav>
       <nav className="md:hidden w-full fixed bottom-0 left-0 h-20 bg-darkblue border-t z-[1000]">
@@ -154,9 +154,7 @@ const Navbar: React.FC = () => {
         ) : (
           <div className="w-24"></div>
         )}
-        <h1 className="text-white text-2xl font-bold absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          Demo Movies
-        </h1>
+        <img src="./images/logo.png" alt="logo.png" className="w-16 h-16 object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
         <div className="nav-options flex">
           <Link
             to="/home"

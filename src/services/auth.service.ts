@@ -13,6 +13,7 @@ import type {
 // URL del backend configurada desde .env
 const API_URL = import.meta.env.VITE_API_URL;
 
+
 // Helper para manejar errores de API
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
@@ -84,8 +85,8 @@ export const authService = {
   },
 
   // Actualizar perfil de usuario
-  async updateUser(data: UpdateUserData): Promise<User> {
-    const response = await fetch(`${API_URL}/user/profile`, {
+  async updateUser(userId: string, data: UpdateUserData): Promise<User> {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
       method: "PUT",
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
@@ -94,8 +95,8 @@ export const authService = {
   },
 
   // Eliminar cuenta
-  async deleteAccount(): Promise<{ message: string }> {
-    const response = await fetch(`${API_URL}/user/account`, {
+  async deleteAccount(data: User): Promise<User> {
+    const response = await fetch(`${API_URL}/users/${data.id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });

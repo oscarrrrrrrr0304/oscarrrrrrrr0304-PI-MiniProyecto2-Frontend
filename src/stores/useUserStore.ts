@@ -113,9 +113,12 @@ const useUserStore = create<AuthState>()(
       forgotPassword: async (data: ForgotPasswordData) => {
         set({ isLoading: true, error: null });
         try {
-          await authService.forgotPassword(data);
+          console.log("Store: Iniciando forgotPassword con:", data);
+          const result = await authService.forgotPassword(data);
+          console.log("Store: Respuesta recibida:", result);
           set({ isLoading: false });
         } catch (error: unknown) {
+          console.error("Store: Error en forgotPassword:", error);
           const errorMessage = error instanceof Error ? error.message : "Error al enviar correo de recuperación";
           set({
             error: errorMessage,

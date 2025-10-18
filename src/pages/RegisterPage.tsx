@@ -67,7 +67,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="login w-full h-screen flex relative">
+    <div className="login w-full min-h-screen flex relative">
       <div className="auth-form w-full md:w-md flex flex-col justify-between items-center h-full text-white bg-darkblue/95 md:bg-darkblue gap-5 p-6 md:p-10 relative z-10">
         <div></div>
         <div className="flex flex-col justify-center items-center gap-3 md:gap-5">

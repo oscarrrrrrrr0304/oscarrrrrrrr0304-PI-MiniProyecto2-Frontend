@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import Input from "../components/Input";
 import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";

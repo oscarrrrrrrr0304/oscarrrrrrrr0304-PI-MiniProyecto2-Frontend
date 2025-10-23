@@ -8,14 +8,14 @@ interface VideoCardProps {
 const VideoCard: React.FC<VideoCardProps> = ({ video, onVideoClick }) => {
   const handleClick = () => {
     if (onVideoClick) {
-      onVideoClick(video);
+    //   onVideoClick(video);
     }
   };
 
   return (
     <div
       className="video-card h-64 w-full sm:w-72 md:w-96 md:h-fit flex-shrink-0 flex flex-col items-center gap-2 cursor-pointer"
-    //   onClick={handleClick}
+      onClick={handleClick}
     >
       <img
         src={video.image}

@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router";
 import Input from "../components/Input";
 import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
+import { validatePassword } from "../utils/validators";
 
 const RegisterPage: React.FC = () => {
   const videos = [
@@ -41,8 +42,10 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    if (password.length < 6) {
-      setValidationError("La contraseña debe tener al menos 6 caracteres");
+    // Validar requisitos de contraseña segura
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setValidationError(passwordValidation.errors.join(". "));
       return;
     }
 
@@ -87,8 +90,8 @@ const RegisterPage: React.FC = () => {
             <Input
               type="text"
               id="username"
-              label="Nombre de usuario"
-              placeholder="Ingresa tu nombre de usuario"
+              label="Nombre Completo"
+              placeholder="Ingresa tu nombre completo"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -111,15 +114,20 @@ const RegisterPage: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Input
-              type="password"
-              id="password"
-              label="Contraseña"
-              placeholder="Ingresa tu contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="w-full">
+              <Input
+                type="password"
+                id="password"
+                label="Contraseña"
+                placeholder="Ingresa tu contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <p className="text-xs text-white/60 mt-1">
+                Mínimo 8 caracteres, una mayúscula, un número y un carácter especial
+              </p>
+            </div>
             <Input
               type="password"
               id="confirm-password"

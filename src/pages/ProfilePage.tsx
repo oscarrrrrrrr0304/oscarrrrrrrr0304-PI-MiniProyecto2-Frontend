@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
 import useUserStore from "../stores/useUserStore";
+import { validatePassword } from "../utils/validators";
 
 const ProfilePage: React.FC = () => {
-  const { user, updateUser, deleteAccount, logout, isLoading } = useUserStore();
+  const { user, updateUser, deleteAccount, logout, changePassword, isLoading } = useUserStore();
 
   // Estados para los modales
   const [showEditModal, setShowEditModal] = useState(false);
@@ -17,6 +18,14 @@ const ProfilePage: React.FC = () => {
     email: user?.email || "",
     age: user?.age || 0,
     bio: "", // Nueva descripción "sobre mi"
+  });
+
+  // Estados para cambio de contraseña
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
   });
 
   // Estados para el modal de eliminar cuenta
@@ -37,6 +46,51 @@ const ProfilePage: React.FC = () => {
 
   const handleUpdateProfile = async () => {
     try {
+      // Si se está cambiando la contraseña
+      if (showPasswordChange) {
+        // Validar que las contraseñas no estén vacías
+        if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmNewPassword) {
+          alert("Por favor, completa todos los campos de contraseña");
+          return;
+        }
+
+        // Validar que las contraseñas coincidan
+        if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+          alert("Las contraseñas nuevas no coinciden");
+          return;
+        }
+
+        // Validar que la nueva contraseña cumpla los requisitos
+        const passwordValidation = validatePassword(passwordData.newPassword);
+        if (!passwordValidation.isValid) {
+          alert(`La nueva contraseña no cumple los requisitos:\n${passwordValidation.errors.join("\n")}`);
+          return;
+        }
+
+        // Cambiar contraseña
+        try {
+          await changePassword({
+            currentPassword: passwordData.currentPassword,
+            newPassword: passwordData.newPassword,
+          });
+          
+          // Limpiar campos de contraseña
+          setPasswordData({
+            currentPassword: "",
+            newPassword: "",
+            confirmNewPassword: "",
+          });
+          setShowPasswordChange(false);
+          alert("Contraseña actualizada correctamente");
+        } catch (passwordError) {
+          console.error("Error al cambiar contraseña:", passwordError);
+          const errorMessage = passwordError instanceof Error ? passwordError.message : "Error al cambiar la contraseña";
+          alert(errorMessage);
+          return; // No continuar con la actualización del perfil si falla el cambio de contraseña
+        }
+      }
+
+      // Actualizar perfil
       await updateUser(editData);
       setShowEditModal(false);
       alert("Perfil actualizado correctamente");
@@ -133,7 +187,7 @@ const ProfilePage: React.FC = () => {
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
         <div className="flex flex-col gap-4 mb-6 w-full">
           <h3 className="text-2xl text-white font-semibold text-center mb-4">
-            Eliminando Cuenta
+            Editar Perfil
           </h3>
           <Input
             type="text"
@@ -163,6 +217,58 @@ const ProfilePage: React.FC = () => {
               setEditData({ ...editData, age: parseInt(e.target.value) || 0 })
             }
           />
+          
+          {/* Sección de cambio de contraseña */}
+          <div className="w-full mt-4">
+            <button
+              type="button"
+              onClick={() => setShowPasswordChange(!showPasswordChange)}
+              className="text-white font-semibold hover:text-green transition mb-2"
+            >
+              {showPasswordChange ? "Cancelar cambio de contraseña" : "¿Deseas cambiar tu contraseña?"}
+            </button>
+            
+            {showPasswordChange && (
+              <div className="flex flex-col gap-3 mt-2">
+                <Input
+                  type="password"
+                  id="currentPassword"
+                  label="Contraseña actual"
+                  placeholder="Ingresa tu contraseña actual"
+                  value={passwordData.currentPassword}
+                  onChange={(e) =>
+                    setPasswordData({ ...passwordData, currentPassword: e.target.value })
+                  }
+                />
+                <div>
+                  <Input
+                    type="password"
+                    id="newPassword"
+                    label="Nueva contraseña"
+                    placeholder="Ingresa tu nueva contraseña"
+                    value={passwordData.newPassword}
+                    onChange={(e) =>
+                      setPasswordData({ ...passwordData, newPassword: e.target.value })
+                    }
+                  />
+                  <p className="text-xs text-white/70 mt-1">
+                    Mínimo 8 caracteres, una mayúscula, un número y un carácter especial
+                  </p>
+                </div>
+                <Input
+                  type="password"
+                  id="confirmNewPassword"
+                  label="Confirmar nueva contraseña"
+                  placeholder="Confirma tu nueva contraseña"
+                  value={passwordData.confirmNewPassword}
+                  onChange={(e) =>
+                    setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })
+                  }
+                />
+              </div>
+            )}
+          </div>
+          
           <div className="w-full h-fit flex flex-col gap-1"></div>
         </div>
         <div className="flex gap-4 w-full">
@@ -174,7 +280,15 @@ const ProfilePage: React.FC = () => {
             {isLoading ? "Guardando..." : "Guardar"}
           </button>
           <button
-            onClick={() => setShowEditModal(false)}
+            onClick={() => {
+              setShowEditModal(false);
+              setShowPasswordChange(false);
+              setPasswordData({
+                currentPassword: "",
+                newPassword: "",
+                confirmNewPassword: "",
+              });
+            }}
             className="flex-1 bg-gray-600 text-white py-3 rounded font-semibold hover:bg-gray-700 transition"
           >
             Cancelar

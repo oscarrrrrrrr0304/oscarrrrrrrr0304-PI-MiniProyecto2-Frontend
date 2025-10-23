@@ -7,6 +7,7 @@ import type {
   UpdateUserData,
   ForgotPasswordData,
   ResetPasswordData,
+  ChangePasswordData,
   User,
 } from "../types/auth.types.js";
 
@@ -20,7 +21,7 @@ const handleResponse = async (response: Response) => {
     const error = await response.json().catch(() => ({
       message: "Error en la solicitud",
     }));
-    throw new Error(error.message || `Error ${response.status}`);
+    throw new Error(error.message || error.error || `Error ${response.status}: ${response.statusText}`);
   }
   return response.json();
 };
@@ -87,6 +88,16 @@ export const authService = {
   // Actualizar perfil de usuario
   async updateUser(userId: string, data: UpdateUserData): Promise<User> {
     const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
+
+  // Cambiar contraseña
+  async changePassword(userId: string, data: ChangePasswordData): Promise<{ message: string }> {
+    const response = await fetch(`${API_URL}/users/${userId}/password`, {
       method: "PUT",
       headers: getAuthHeaders(),
       body: JSON.stringify(data),

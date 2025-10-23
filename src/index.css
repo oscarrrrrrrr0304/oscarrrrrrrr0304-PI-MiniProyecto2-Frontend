@@ -9,3 +9,31 @@
     --color-lightblue: #579cf9;
     --color-gray: #575f75;
 }
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #579cf9;
+}
+
+/* Prevent text selection during drag */
+.scroll-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

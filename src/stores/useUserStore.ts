@@ -8,6 +8,7 @@ import type {
   UpdateUserData,
   ForgotPasswordData,
   ResetPasswordData,
+  ChangePasswordData,
 } from "../types/auth.types.js";
 
 interface AuthState {
@@ -29,6 +30,7 @@ interface AuthState {
   
   // Gestión de cuenta
   updateUser: (data: UpdateUserData) => Promise<void>;
+  changePassword: (data: ChangePasswordData) => Promise<void>;
   deleteAccount: () => Promise<void>;
   
   // Verificación de token
@@ -175,6 +177,32 @@ const useUserStore = create<AuthState>()(
           });
         } catch (error: unknown) {
           const errorMessage = error instanceof Error ? error.message : "Error al actualizar perfil";
+          set({
+            error: errorMessage,
+            isLoading: false,
+          });
+          throw error;
+        }
+      },
+
+      // Cambiar contraseña
+      changePassword: async (data: ChangePasswordData) => {
+        const state = useUserStore.getState();
+        const userId = state.user?.id;
+        
+        if (!userId) {
+          throw new Error("No se encontró el usuario. Por favor, vuelve a iniciar sesión.");
+        }
+
+        set({ isLoading: true, error: null });
+        try {
+          await authService.changePassword(userId, data);
+          set({
+            isLoading: false,
+            error: null,
+          });
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : "Error al cambiar contraseña";
           set({
             error: errorMessage,
             isLoading: false,

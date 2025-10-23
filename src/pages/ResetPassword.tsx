@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate } from "react-router";
 import Input from "../components/Input";
 import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
+import { validatePassword } from "../utils/validators";
 
 const ResetPassword: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -37,13 +38,14 @@ const ResetPassword: React.FC = () => {
 
     // Validaciones
     if (newPassword !== confirmPassword) {
-      // Aquí podrías usar un error local o el store
       alert("Las contraseñas no coinciden");
       return;
     }
 
-    if (newPassword.length < 6) {
-      alert("La contraseña debe tener al menos 6 caracteres");
+    // Validar requisitos de contraseña segura
+    const passwordValidation = validatePassword(newPassword);
+    if (!passwordValidation.isValid) {
+      alert(passwordValidation.errors.join("\n"));
       return;
     }
 
@@ -76,7 +78,7 @@ const ResetPassword: React.FC = () => {
             Restablecer Contraseña
           </h2>
           <p className="text-base text-center">
-            Ingresa tu nueva contraseña. Debe tener al menos 6 caracteres.
+            Ingresa tu nueva contraseña. Debe tener al menos 8 caracteres, incluir una mayúscula, un número y un carácter especial.
           </p>
 
           {/* Mostrar mensaje de éxito */}

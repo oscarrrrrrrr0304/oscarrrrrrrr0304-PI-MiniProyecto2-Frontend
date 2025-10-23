@@ -1,3 +1,10 @@
+/**
+ * Componente principal de la aplicación
+ * Configura el enrutamiento de React Router con rutas públicas y protegidas
+ * 
+ * @module App
+ */
+
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
@@ -14,6 +21,40 @@ import LikedPage from "./pages/LikedPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import SiteMapPage from "./pages/SiteMapPage";
 
+/**
+ * Componente raíz de la aplicación
+ * Define la estructura de rutas y la navegación de la aplicación
+ * 
+ * @component
+ * @returns {JSX.Element} Aplicación con enrutamiento configurado
+ * 
+ * @description
+ * Rutas públicas (no requieren autenticación):
+ * - /login - Página de inicio de sesión
+ * - /register - Página de registro
+ * - /forgot-password - Solicitar recuperación de contraseña
+ * - /reset-password/:token - Resetear contraseña con token
+ * 
+ * Rutas protegidas (requieren autenticación):
+ * - /home - Página principal con carruseles de videos
+ * - /profile - Perfil de usuario
+ * - /search - Búsqueda y filtrado de videos
+ * - /liked - Videos marcados como favoritos
+ * - /about - Acerca de nosotros
+ * - /sitemap - Mapa del sitio
+ * 
+ * La ruta raíz (/) redirige automáticamente a /login
+ * 
+ * @example
+ * ```tsx
+ * // Uso en main.tsx
+ * ReactDOM.createRoot(document.getElementById("root")!).render(
+ *   <React.StrictMode>
+ *     <App />
+ *   </React.StrictMode>
+ * );
+ * ```
+ */
 const App: React.FC = () => {
   // Zustand con persist maneja automáticamente la restauración del estado desde localStorage
   

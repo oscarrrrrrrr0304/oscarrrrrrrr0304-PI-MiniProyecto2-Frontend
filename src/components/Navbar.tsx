@@ -1,10 +1,34 @@
 import { Link, useNavigate, useLocation } from "react-router";
 
+/**
+ * Componente de barra de navegación responsive
+ * En móvil: barra superior con logo y botón volver + barra inferior con navegación
+ * En desktop/tablet: barra única superior con logo centrado y navegación a la derecha
+ * 
+ * @component
+ * @returns {JSX.Element} Barra de navegación adaptativa
+ * 
+ * @example
+ * ```tsx
+ * <Navbar />
+ * ```
+ * 
+ * @description
+ * Características:
+ * - Navegación responsive (móvil y desktop)
+ * - Botón "Volver" que aparece en todas las páginas excepto Home
+ * - Enlaces a: Home, Search, Liked, Profile
+ * - Logo centrado
+ * - Posicionamiento fijo (top en desktop, top + bottom en móvil)
+ */
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === "/home";
 
+  /**
+   * Navega a la página anterior en el historial del navegador
+   */
   const handleGoBack = () => {
     navigate(-1);
   };

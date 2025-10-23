@@ -1,9 +1,50 @@
+/**
+ * Página de recuperación de contraseña
+ * Permite solicitar un correo para resetear la contraseña olvidada
+ * 
+ * @module ForgotPassword
+ */
+
 import { Link } from "react-router";
 import Input from "../components/Input";
 import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
 
+/**
+ * Componente de la página de recuperación de contraseña
+ * Envía un correo electrónico con un link para resetear la contraseña
+ * 
+ * @component
+ * @returns {JSX.Element} Página de recuperación de contraseña
+ * 
+ * @description
+ * Características:
+ * - Formulario simple con solo email
+ * - Video de fondo rotativo
+ * - Mensaje de éxito al enviar correo
+ * - Manejo de errores visuales
+ * - Loading state durante el envío
+ * - Enlace para volver al login
+ * - Responsive design
+ * 
+ * Flujo:
+ * 1. Usuario ingresa email
+ * 2. Sistema envía correo con token
+ * 3. Usuario recibe link para resetear contraseña
+ * 4. Redirección a ResetPassword con token
+ * 
+ * @example
+ * ```tsx
+ * <PublicRoute>
+ *   <ForgotPassword />
+ * </PublicRoute>
+ * ```
+ */
 const ForgotPassword: React.FC = () => {
+  /**
+   * Array de rutas de videos para el fondo
+   * @constant {string[]}
+   */
   const videos = [
     "/videos/auth-video1.mp4",
     "/videos/auth-video2.mp4",
@@ -20,11 +61,22 @@ const ForgotPassword: React.FC = () => {
   // Zustand store
   const { forgotPassword, isLoading, error, clearError } = useUserStore();
 
+  /**
+   * Maneja el evento de finalización del video
+   * Cambia al siguiente video en el array de forma circular
+   */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
     setCurrentVideoIndex(nextIndex);
   };
 
+  /**
+   * Maneja el envío del formulario de recuperación
+   * Envía email con link de reseteo de contraseña
+   * 
+   * @async
+   * @param {FormEvent} e - Evento del formulario
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();

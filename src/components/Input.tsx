@@ -1,5 +1,16 @@
 import type { ChangeEvent } from "react";
 
+/**
+ * Props para el componente Input
+ * @typedef {Object} InputProps
+ * @property {string} type - Tipo de input HTML (text, email, password, number, etc.)
+ * @property {string} id - ID único del input para asociar con el label
+ * @property {string} label - Texto del label que se muestra encima del input
+ * @property {string} placeholder - Texto placeholder del input
+ * @property {string} [value] - Valor controlado del input
+ * @property {Function} [onChange] - Callback que se ejecuta cuando cambia el valor del input
+ * @property {boolean} [required] - Si el campo es requerido (default: false)
+ */
 interface InputProps {
   type: string;
   id: string;
@@ -10,6 +21,27 @@ interface InputProps {
   required?: boolean;
 }
 
+/**
+ * Componente de input reutilizable con label y estilos personalizados
+ * Incluye estilos de borde azul con efecto focus
+ * 
+ * @component
+ * @param {InputProps} props - Props del componente
+ * @returns {JSX.Element} Input con label renderizado
+ * 
+ * @example
+ * ```tsx
+ * <Input
+ *   type="email"
+ *   id="user-email"
+ *   label="Correo Electrónico"
+ *   placeholder="tu@email.com"
+ *   value={email}
+ *   onChange={(e) => setEmail(e.target.value)}
+ *   required
+ * />
+ * ```
+ */
 const Input: React.FC<InputProps> = ({
   type,
   id,

@@ -5,6 +5,15 @@ import TitleBanner from "./TitleBanner";
 import type { PexelsVideo } from "../types/pexels.types";
 import { pexelsService } from "../services/pexels.service";
 
+/**
+ * Props para el componente VideosCarousel
+ * @typedef {Object} VideosCarouselProps
+ * @property {string} title - Título del carrusel que se muestra en el TitleBanner
+ * @property {string} [category] - Categoría de videos a buscar (ej: 'entertainment', 'travel')
+ * @property {boolean} [isPopular] - Si es true, carga videos populares en lugar de buscar por categoría
+ * @property {number} [perPage] - Cantidad de videos a cargar por página (default: 12)
+ * @property {Function} onVideoClick - Callback que se ejecuta cuando se hace click en un video
+ */
 interface VideosCarouselProps {
   title: string;
   category?: string;
@@ -13,6 +22,34 @@ interface VideosCarouselProps {
   onVideoClick: (video: PexelsVideo) => void;
 }
 
+/**
+ * Componente de carrusel horizontal de videos
+ * Muestra una lista de videos en formato carrusel con scroll horizontal
+ * Incluye un banner de título con botón "Ver más" que navega a la página de búsqueda
+ * 
+ * @component
+ * @param {VideosCarouselProps} props - Props del componente
+ * @returns {JSX.Element} Carrusel de videos renderizado
+ * 
+ * @example
+ * ```tsx
+ * <VideosCarousel
+ *   title="Videos Populares"
+ *   isPopular={true}
+ *   onVideoClick={(video) => setSelectedVideo(video)}
+ * />
+ * ```
+ * 
+ * @example
+ * ```tsx
+ * <VideosCarousel
+ *   title="Entretenimiento"
+ *   category="entertainment"
+ *   perPage={15}
+ *   onVideoClick={(video) => openModal(video)}
+ * />
+ * ```
+ */
 const VideosCarousel: React.FC<VideosCarouselProps> = ({
   title,
   category,
@@ -25,6 +62,10 @@ const VideosCarousel: React.FC<VideosCarouselProps> = ({
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  /**
+   * Maneja el click en el botón "Ver más"
+   * Navega a la página de búsqueda con la categoría correspondiente
+   */
   const handleViewMore = () => {
     // Redirigir a SearchPage con la categoría
     if (category) {
@@ -34,6 +75,12 @@ const VideosCarousel: React.FC<VideosCarouselProps> = ({
     }
   };
 
+  /**
+   * Carga los videos desde la API de Pexels
+   * Usa getPopularVideos si isPopular es true, o searchVideos con la categoría
+   * @async
+   * @throws {Error} Si hay un error al cargar los videos
+   */
   const loadVideos = async () => {
     try {
       setLoading(true);

@@ -1,13 +1,61 @@
+/**
+ * Página de reseteo de contraseña con token
+ * Permite establecer una nueva contraseña usando el token recibido por email
+ * 
+ * @module ResetPassword
+ */
+
 import { Link, useParams, useNavigate } from "react-router";
 import Input from "../components/Input";
 import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
 import { validatePassword } from "../utils/validators";
 
+/**
+ * Componente de la página de reseteo de contraseña
+ * Usa el token de URL para validar y permitir cambio de contraseña
+ * 
+ * @component
+ * @returns {JSX.Element} Página de reseteo de contraseña
+ * 
+ * @description
+ * Características:
+ * - Extrae token de URL params (/reset-password/:token)
+ * - Formulario con nueva contraseña y confirmación
+ * - Validación de contraseña segura
+ * - Mostrar/ocultar contraseña
+ * - Video de fondo rotativo
+ * - Mensaje de éxito con redirección al login
+ * - Manejo de errores (token inválido/expirado)
+ * - Loading state
+ * 
+ * Requisitos de contraseña:
+ * - Mínimo 8 caracteres
+ * - Al menos una letra mayúscula
+ * - Al menos un número
+ * - Al menos un carácter especial
+ * 
+ * Flujo:
+ * 1. Usuario llega con token en URL
+ * 2. Ingresa nueva contraseña y confirma
+ * 3. Sistema valida token y actualiza contraseña
+ * 4. Redirección automática al login después de 3 segundos
+ * 
+ * @example
+ * ```tsx
+ * <PublicRoute>
+ *   <ResetPassword />
+ * </PublicRoute>
+ * ```
+ */
 const ResetPassword: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   
+  /**
+   * Array de rutas de videos para el fondo
+   * @constant {string[]}
+   */
   const videos = [
     "/videos/auth-video1.mp4",
     "/videos/auth-video2.mp4",
@@ -26,11 +74,22 @@ const ResetPassword: React.FC = () => {
   // Zustand store
   const { resetPassword, isLoading, error, clearError } = useUserStore();
 
+  /**
+   * Maneja el evento de finalización del video
+   * Cambia al siguiente video en el array de forma circular
+   */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
     setCurrentVideoIndex(nextIndex);
   };
 
+  /**
+   * Maneja el envío del formulario de reseteo
+   * Valida contraseñas y actualiza con el token
+   * 
+   * @async
+   * @param {FormEvent} e - Evento del formulario
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();

@@ -1,3 +1,10 @@
+/**
+ * Store de Zustand para la gestión del estado de autenticación de usuario
+ * Incluye persistencia en localStorage para mantener la sesión
+ * 
+ * @module useUserStore
+ */
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authService } from "../services/auth.service";
@@ -11,6 +18,15 @@ import type {
   ChangePasswordData,
 } from "../types/auth.types.js";
 
+/**
+ * Interface del estado de autenticación
+ * @interface AuthState
+ * @property {User | null} user - Usuario autenticado actual, null si no hay sesión
+ * @property {string | null} token - Token JWT de autenticación
+ * @property {boolean} isAuthenticated - Estado de autenticación del usuario
+ * @property {boolean} isLoading - Indica si hay una operación en progreso
+ * @property {string | null} error - Mensaje de error si hubo un problema
+ */
 interface AuthState {
   // Estado
   user: User | null;
@@ -19,28 +35,105 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
 
-  // Acciones de autenticación
+  /**
+   * Inicia sesión con credenciales
+   * @param {LoginCredentials} credentials - Email y contraseña
+   * @returns {Promise<void>}
+   * @throws {Error} Si las credenciales son inválidas
+   */
   login: (credentials: LoginCredentials) => Promise<void>;
+  
+  /**
+   * Registra un nuevo usuario
+   * @param {RegisterData} data - Datos del nuevo usuario
+   * @returns {Promise<void>}
+   * @throws {Error} Si el email ya está registrado
+   */
   register: (data: RegisterData) => Promise<void>;
+  
+  /**
+   * Cierra la sesión del usuario
+   * @returns {Promise<void>}
+   */
   logout: () => Promise<void>;
   
-  // Recuperación de contraseña
+  /**
+   * Solicita recuperación de contraseña por email
+   * @param {ForgotPasswordData} data - Email del usuario
+   * @returns {Promise<void>}
+   * @throws {Error} Si el email no está registrado
+   */
   forgotPassword: (data: ForgotPasswordData) => Promise<void>;
+  
+  /**
+   * Resetea la contraseña con un token
+   * @param {ResetPasswordData} data - Token y nueva contraseña
+   * @returns {Promise<void>}
+   * @throws {Error} Si el token es inválido
+   */
   resetPassword: (data: ResetPasswordData) => Promise<void>;
   
-  // Gestión de cuenta
+  /**
+   * Actualiza los datos del perfil de usuario
+   * @param {UpdateUserData} data - Datos a actualizar
+   * @returns {Promise<void>}
+   * @throws {Error} Si el usuario no está autenticado o los datos son inválidos
+   */
   updateUser: (data: UpdateUserData) => Promise<void>;
+  
+  /**
+   * Cambia la contraseña del usuario
+   * @param {ChangePasswordData} data - Contraseña actual y nueva
+   * @returns {Promise<void>}
+   * @throws {Error} Si la contraseña actual es incorrecta
+   */
   changePassword: (data: ChangePasswordData) => Promise<void>;
+  
+  /**
+   * Elimina permanentemente la cuenta del usuario
+   * @returns {Promise<void>}
+   * @throws {Error} Si el usuario no está autenticado
+   */
   deleteAccount: () => Promise<void>;
   
-  // Verificación de token
+  /**
+   * Verifica la validez del token JWT almacenado
+   * Se ejecuta al cargar la aplicación para auto-login
+   * @returns {Promise<void>}
+   */
   verifyToken: () => Promise<void>;
   
-  // Utilidades
+  /**
+   * Limpia el mensaje de error del estado
+   * @returns {void}
+   */
   clearError: () => void;
+  
+  /**
+   * Establece manualmente el usuario en el estado
+   * @param {User} user - Usuario a establecer
+   * @returns {void}
+   */
   setUser: (user: User) => void;
 }
 
+/**
+ * Hook de Zustand para el estado de autenticación
+ * Incluye middleware de persistencia para guardar usuario, token e isAuthenticated en localStorage
+ * 
+ * @example
+ * ```tsx
+ * const { user, isAuthenticated, login, logout } = useUserStore();
+ * 
+ * // Usar en componente
+ * if (isAuthenticated) {
+ *   console.log('Usuario:', user.name);
+ * }
+ * 
+ * // Login
+ * await login({ email: 'user@example.com', password: '123456' });
+ * ```
+ */
 const useUserStore = create<AuthState>()(
   persist(
     (set) => ({

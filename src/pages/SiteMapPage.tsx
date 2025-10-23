@@ -1,5 +1,41 @@
+/**
+ * Página de mapa del sitio
+ * Muestra la estructura completa de navegación de la aplicación
+ * 
+ * @module SiteMapPage
+ */
+
 import { Link } from "react-router-dom";
 
+/**
+ * Componente de la página de Sitemap
+ * Presenta todas las rutas disponibles organizadas por categorías
+ * 
+ * @component
+ * @returns {JSX.Element} Página con mapa del sitio
+ * 
+ * @description
+ * Características:
+ * - Layout en grid responsive
+ * - Secciones organizadas por funcionalidad
+ * - Enlaces funcionales a todas las páginas
+ * - Efectos hover en los enlaces
+ * - Diseño card para cada sección
+ * 
+ * Secciones incluidas:
+ * - Autenticación (Login, Register, Forgot Password)
+ * - Navegación Principal (Home, Search, Liked, Profile)
+ * - Información (About Us, Site Map)
+ * 
+ * @example
+ * ```tsx
+ * <ProtectedRoute>
+ *   <Layout>
+ *     <SiteMapPage />
+ *   </Layout>
+ * </ProtectedRoute>
+ * ```
+ */
 const SiteMapPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-darkblue text-white p-8 flex items-center justify-center">

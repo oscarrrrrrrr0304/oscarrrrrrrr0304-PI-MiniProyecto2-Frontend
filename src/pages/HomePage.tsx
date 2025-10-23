@@ -1,24 +1,68 @@
+/**
+ * Página principal de la aplicación (Home)
+ * Muestra múltiples carruseles de videos organizados por categorías
+ * 
+ * @module HomePage
+ */
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import VideosCarousel from "../components/VideosCarousel";
 import VideoPlayerModal from "../components/VideoPlayerModal";
 import type { PexelsVideo } from "../types/pexels.types";
 
+/**
+ * Componente de la página principal
+ * Renderiza carruseles de videos por categoría y un modal de reproducción
+ * 
+ * @component
+ * @returns {JSX.Element} Página de inicio con carruseles de videos
+ * 
+ * @description
+ * Características principales:
+ * - 8 categorías de videos: Populares, Entretenimiento, Viajes, Música, Moda, Videojuegos, Tecnología, Deportes
+ * - Cada categoría tiene su propio carrusel horizontal
+ * - Click en video abre modal de reproducción
+ * - Footer con enlaces a Sobre Nosotros y Mapa del Sitio
+ * - Diseño responsive con padding y espaciado adaptativo
+ * 
+ * @example
+ * ```tsx
+ * // Uso en App.tsx
+ * <ProtectedRoute>
+ *   <Layout>
+ *     <HomePage />
+ *   </Layout>
+ * </ProtectedRoute>
+ * ```
+ */
 const HomePage: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<PexelsVideo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  /**
+   * Maneja el click en un video
+   * Abre el modal de reproducción con el video seleccionado
+   * @param {PexelsVideo} video - Video a reproducir
+   */
   const handleVideoClick = (video: PexelsVideo) => {
     setSelectedVideo(video);
     setIsModalOpen(true);
   };
 
+  /**
+   * Cierra el modal de reproducción
+   * Limpia el video seleccionado del estado
+   */
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedVideo(null);
   };
 
-  // Categorías de videos
+  /**
+   * Configuración de categorías de videos
+   * @constant {Array<{title: string, category?: string, isPopular?: boolean}>}
+   */
   const categories = [
     { title: "Videos Populares", isPopular: true },
     { title: "Entretenimiento", category: "entertainment" },

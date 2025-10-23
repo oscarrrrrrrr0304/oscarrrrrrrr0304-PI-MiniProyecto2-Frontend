@@ -1,9 +1,45 @@
+/**
+ * Página de inicio de sesión
+ * Permite a los usuarios autenticarse en la aplicación
+ * 
+ * @module LoginPage
+ */
+
 import { Link, useNavigate } from "react-router";
 import Input from "../components/Input";
 import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
 
+/**
+ * Componente de la página de Login
+ * Incluye formulario de autenticación con email y contraseña
+ * Muestra video de fondo que rota automáticamente
+ * 
+ * @component
+ * @returns {JSX.Element} Página de inicio de sesión
+ * 
+ * @description
+ * Características:
+ * - Formulario con validación de email y contraseña
+ * - Video de fondo rotativo (4 videos)
+ * - Manejo de errores con mensajes visuales
+ * - Loading state durante la autenticación
+ * - Enlaces a registro y recuperación de contraseña
+ * - Responsive design (móvil y desktop)
+ * 
+ * @example
+ * ```tsx
+ * // Uso en App.tsx
+ * <PublicRoute>
+ *   <LoginPage />
+ * </PublicRoute>
+ * ```
+ */
 const LoginPage: React.FC = () => {
+  /**
+   * Array de rutas de videos para el fondo
+   * @constant {string[]}
+   */
   const videos = [
     "/videos/auth-video1.mp4",
     "/videos/auth-video2.mp4",
@@ -21,11 +57,22 @@ const LoginPage: React.FC = () => {
   const { login, isLoading, error, clearError } = useUserStore();
   const navigate = useNavigate();
 
+  /**
+   * Maneja el evento de finalización del video
+   * Cambia al siguiente video en el array de forma circular
+   */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
     setCurrentVideoIndex(nextIndex);
   };
 
+  /**
+   * Maneja el envío del formulario de login
+   * Intenta autenticar al usuario y redirige a /home si es exitoso
+   * 
+   * @async
+   * @param {FormEvent} e - Evento del formulario
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();

@@ -1,10 +1,52 @@
+/**
+ * Página de registro de nuevos usuarios
+ * Permite crear una cuenta nueva en la aplicación
+ * 
+ * @module RegisterPage
+ */
+
 import { Link, useNavigate } from "react-router";
 import Input from "../components/Input";
 import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
 import { validatePassword } from "../utils/validators";
 
+/**
+ * Componente de la página de registro
+ * Incluye formulario completo con validaciones de contraseña segura
+ * 
+ * @component
+ * @returns {JSX.Element} Página de registro
+ * 
+ * @description
+ * Características:
+ * - Formulario con nombre, edad, email, contraseña y confirmación
+ * - Validación de contraseñas coincidentes
+ * - Validación de contraseña segura (mayúsculas, números, caracteres especiales)
+ * - Video de fondo rotativo (4 videos)
+ * - Manejo de errores con mensajes visuales
+ * - Loading state durante el registro
+ * - Mensaje de requisitos de contraseña
+ * - Responsive design
+ * 
+ * Requisitos de contraseña:
+ * - Mínimo 8 caracteres
+ * - Al menos una letra mayúscula
+ * - Al menos un número
+ * - Al menos un carácter especial
+ * 
+ * @example
+ * ```tsx
+ * <PublicRoute>
+ *   <RegisterPage />
+ * </PublicRoute>
+ * ```
+ */
 const RegisterPage: React.FC = () => {
+  /**
+   * Array de rutas de videos para el fondo
+   * @constant {string[]}
+   */
   const videos = [
     "/videos/auth-video1.mp4",
     "/videos/auth-video2.mp4",
@@ -26,11 +68,22 @@ const RegisterPage: React.FC = () => {
   const { register, isLoading, error, clearError } = useUserStore();
   const navigate = useNavigate();
 
+  /**
+   * Maneja el evento de finalización del video
+   * Cambia al siguiente video en el array de forma circular
+   */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
     setCurrentVideoIndex(nextIndex);
   };
 
+  /**
+   * Maneja el envío del formulario de registro
+   * Valida contraseñas y crea nueva cuenta
+   * 
+   * @async
+   * @param {FormEvent} e - Evento del formulario
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();

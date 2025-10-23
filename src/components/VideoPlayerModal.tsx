@@ -2,12 +2,37 @@ import { useEffect, useRef } from "react";
 import type { PexelsVideo } from "../types/pexels.types";
 import { pexelsService } from "../services/pexels.service";
 
+/**
+ * Props para el componente VideoPlayerModal
+ * @typedef {Object} VideoPlayerModalProps
+ * @property {PexelsVideo | null} video - Video de Pexels a reproducir, null si no hay video seleccionado
+ * @property {boolean} isOpen - Estado de apertura del modal
+ * @property {Function} onClose - Callback que se ejecuta para cerrar el modal
+ */
 interface VideoPlayerModalProps {
   video: PexelsVideo | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
+/**
+ * Modal para reproducir videos de Pexels
+ * Incluye controles de video HTML5, información del autor y métricas
+ * Previene el scroll del body cuando está abierto y pausa el video al cerrar
+ * 
+ * @component
+ * @param {VideoPlayerModalProps} props - Props del componente
+ * @returns {JSX.Element | null} Modal de reproducción de video o null si está cerrado
+ * 
+ * @example
+ * ```tsx
+ * <VideoPlayerModal
+ *   video={selectedVideo}
+ *   isOpen={isModalOpen}
+ *   onClose={() => setIsModalOpen(false)}
+ * />
+ * ```
+ */
 const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   video,
   isOpen,

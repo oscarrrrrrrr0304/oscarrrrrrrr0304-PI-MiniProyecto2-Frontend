@@ -1,5 +1,43 @@
+/**
+ * Página "Acerca de Nosotros"
+ * Muestra información sobre el equipo de desarrollo de QuantumPixel
+ * 
+ * @module AboutUsPage
+ */
+
 import Member from "../components/Member";
 
+/**
+ * Componente de la página About Us
+ * Presenta al equipo de desarrollo con fotos y roles
+ * 
+ * @component
+ * @returns {JSX.Element} Página con información del equipo
+ * 
+ * @description
+ * Características:
+ * - Título con branding "QuantumPixel"
+ * - Grid de miembros del equipo
+ * - Componente Member reutilizable
+ * - Layout responsive (columna en móvil, fila en desktop)
+ * - Efectos hover en las tarjetas de miembros
+ * 
+ * Equipo:
+ * - Jean Pierre Cardenas - Desarrollador Frontend
+ * - Juan David Olaya - Desarrollador Backend
+ * - Juan Esteban Ortiz - Desarrollador de Base de Datos
+ * - Nicolas Enrique Granada - Tester
+ * - Oscar Mario Muñoz - Product Owner
+ * 
+ * @example
+ * ```tsx
+ * <ProtectedRoute>
+ *   <Layout>
+ *     <AboutUsPage />
+ *   </Layout>
+ * </ProtectedRoute>
+ * ```
+ */
 const AboutUsPage: React.FC = () => {
   return (
     <div className="flex flex-col w-full h-fit min-h-screen justify-center items-center px-8 gap-8 pt-20">

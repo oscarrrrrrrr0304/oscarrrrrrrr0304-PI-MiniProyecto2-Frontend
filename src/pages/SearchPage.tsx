@@ -1,3 +1,10 @@
+/**
+ * Página de búsqueda y filtrado de videos
+ * Permite buscar videos por categoría con scroll infinito
+ * 
+ * @module SearchPage
+ */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import VideoCard from "../components/VideoCard";
@@ -5,6 +12,47 @@ import VideoPlayerModal from "../components/VideoPlayerModal";
 import { pexelsService } from "../services/pexels.service";
 import type { PexelsVideo } from "../types/pexels.types";
 
+/**
+ * Componente de la página de búsqueda
+ * Implementa búsqueda por categoría con paginación infinita usando Intersection Observer
+ * 
+ * @component
+ * @returns {JSX.Element} Página de búsqueda con filtros y resultados
+ * 
+ * @description
+ * Características principales:
+ * - Barra de búsqueda con formulario
+ * - Filtros por categoría vía query params (?category=...)
+ * - Badge de filtro activo con botón para remover
+ * - Infinite scroll con Intersection Observer
+ * - Paginación automática al llegar al final
+ * - Layout flex-wrap responsive
+ * - Scroll reset al cambiar de categoría
+ * - Videos populares por defecto si no hay filtro
+ * - Modal de reproducción de videos
+ * 
+ * Estados gestionados:
+ * - activeFilter: Categoría actual desde URL params
+ * - searchQuery: Texto del input de búsqueda
+ * - videos: Array de videos cargados
+ * - page: Página actual para paginación
+ * - hasMore: Si hay más videos para cargar
+ * - loading: Estado de carga
+ * - error: Mensaje de error si falla la carga
+ * 
+ * @example
+ * ```tsx
+ * // Navegación desde HomePage
+ * navigate('/search?category=entertainment');
+ * 
+ * // Uso en App.tsx
+ * <ProtectedRoute>
+ *   <Layout>
+ *     <SearchPage />
+ *   </Layout>
+ * </ProtectedRoute>
+ * ```
+ */
 const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -20,6 +68,15 @@ const SearchPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const observer = useRef<IntersectionObserver | null>(null);
+  
+  /**
+   * Callback ref para el último elemento de video
+   * Implementa Intersection Observer para detectar cuando el usuario llega al final
+   * y cargar más videos automáticamente
+   * 
+   * @callback lastVideoElementRef
+   * @param {HTMLDivElement | null} node - Elemento DOM del último video
+   */
   const lastVideoElementRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (loading) return;
@@ -36,6 +93,10 @@ const SearchPage: React.FC = () => {
     [loading, hasMore]
   );
 
+  /**
+   * Effect: Reset y scroll cuando cambia el filtro activo
+   * Limpia videos, resetea página y scroll al cambiar de categoría
+   */
   useEffect(() => {
     // Scroll al inicio de la página cuando cambia el filtro
     window.scrollTo(0, 0);
@@ -47,11 +108,21 @@ const SearchPage: React.FC = () => {
     setError(null);
   }, [activeFilter]);
 
+  /**
+   * Effect: Carga videos cuando cambian el filtro o la página
+   */
   useEffect(() => {
     loadVideos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFilter, page]);
 
+  /**
+   * Carga videos desde la API de Pexels
+   * Usa videos populares por defecto o busca por categoría
+   * 
+   * @async
+   * @throws {Error} Si falla la carga de videos
+   */
   const loadVideos = async () => {
     try {
       setLoading(true);
@@ -78,16 +149,32 @@ const SearchPage: React.FC = () => {
     }
   };
 
+  /**
+   * Maneja el click en un video
+   * Abre el modal de reproducción
+   * @param {PexelsVideo} video - Video seleccionado
+   */
   const handleVideoClick = (video: PexelsVideo) => {
     setSelectedVideo(video);
     setIsModalOpen(true);
   };
 
+  /**
+   * Cierra el modal de reproducción
+   * Limpia el video seleccionado
+   */
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedVideo(null);
   };
 
+  /**
+   * Maneja el envío del formulario de búsqueda
+   * Actualiza los query params con la categoría buscada
+   * Usa { replace: true } para no crear múltiples entradas en el historial
+   * 
+   * @param {React.FormEvent} e - Evento del formulario
+   */
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -96,10 +183,18 @@ const SearchPage: React.FC = () => {
     }
   };
 
+  /**
+   * Remueve el filtro activo
+   * Navega a /search sin query params
+   */
   const handleRemoveFilter = () => {
     navigate('/search');
   };
 
+  /**
+   * Obtiene el label formateado del filtro activo
+   * @returns {string | null} Label capitalizado o null si no hay filtro
+   */
   const getFilterLabel = () => {
     if (!activeFilter) return null;
     if (activeFilter === 'popular') return 'Populares';

@@ -1,4 +1,9 @@
-// Servicio de autenticación - Listo para conectar con el backend
+/**
+ * Servicio de autenticación para interactuar con el backend
+ * Maneja login, registro, verificación de token, recuperación de contraseña y gestión de usuario
+ * 
+ * @module authService
+ */
 
 import type {
   LoginCredentials,
@@ -11,11 +16,21 @@ import type {
   User,
 } from "../types/auth.types.js";
 
-// URL del backend configurada desde .env
+/**
+ * URL base del backend obtenida desde variables de entorno
+ * @constant {string}
+ */
 const API_URL = import.meta.env.VITE_API_URL;
 
-
-// Helper para manejar errores de API
+/**
+ * Maneja las respuestas de las peticiones HTTP
+ * Parsea errores del backend y lanza excepciones con mensajes descriptivos
+ * 
+ * @async
+ * @param {Response} response - Respuesta de fetch
+ * @returns {Promise<any>} JSON parseado de la respuesta
+ * @throws {Error} Si la respuesta no es exitosa (status code >= 400)
+ */
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
     const error = await response.json().catch(() => ({
@@ -26,7 +41,12 @@ const handleResponse = async (response: Response) => {
   return response.json();
 };
 
-// Helper para obtener headers con token
+/**
+ * Obtiene los headers de autenticación con el token JWT
+ * Incluye el token desde localStorage si existe
+ * 
+ * @returns {Object} Headers con Content-Type y Authorization (si hay token)
+ */
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
   return {
@@ -35,8 +55,20 @@ const getAuthHeaders = () => {
   };
 };
 
+/**
+ * Servicio de autenticación y gestión de usuarios
+ * @namespace authService
+ */
 export const authService = {
-  // Login
+  /**
+   * Inicia sesión con credenciales de usuario
+   * @async
+   * @param {LoginCredentials} credentials - Email y contraseña del usuario
+   * @returns {Promise<AuthResponse>} Usuario autenticado y token JWT
+   * @throws {Error} Si las credenciales son inválidas
+   * @example
+   * const { user, token } = await authService.login({ email: 'user@example.com', password: '123456' });
+   */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
@@ -46,7 +78,15 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Registro
+  /**
+   * Registra un nuevo usuario en la aplicación
+   * @async
+   * @param {RegisterData} data - Datos del nuevo usuario (nombre, email, contraseña, edad)
+   * @returns {Promise<AuthResponse>} Usuario registrado y token JWT
+   * @throws {Error} Si el email ya está registrado o los datos son inválidos
+   * @example
+   * const { user, token } = await authService.register({ name: 'Juan', email: 'juan@example.com', password: '123456', age: 25 });
+   */
   async register(data: RegisterData): Promise<AuthResponse> {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
@@ -56,7 +96,15 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Verificar token (para auto-login)
+  /**
+   * Verifica la validez del token JWT almacenado
+   * Usado para auto-login al cargar la aplicación
+   * @async
+   * @returns {Promise<User>} Datos del usuario si el token es válido
+   * @throws {Error} Si el token es inválido o ha expirado
+   * @example
+   * const user = await authService.verifyToken();
+   */
   async verifyToken(): Promise<User> {
     const response = await fetch(`${API_URL}/auth/verify`, {
       method: "GET",
@@ -65,7 +113,15 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Recuperación de contraseña (enviar email)
+  /**
+   * Solicita un correo de recuperación de contraseña
+   * @async
+   * @param {ForgotPasswordData} data - Email del usuario
+   * @returns {Promise<{message: string}>} Mensaje de confirmación
+   * @throws {Error} Si el email no está registrado
+   * @example
+   * await authService.forgotPassword({ email: 'user@example.com' });
+   */
   async forgotPassword(data: ForgotPasswordData): Promise<{ message: string }> {
     const response = await fetch(`${API_URL}/auth/forgot-password`, {
       method: "POST",
@@ -75,7 +131,15 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Resetear contraseña con token
+  /**
+   * Resetea la contraseña usando el token recibido por email
+   * @async
+   * @param {ResetPasswordData} data - Token de reseteo y nueva contraseña
+   * @returns {Promise<{message: string}>} Mensaje de confirmación
+   * @throws {Error} Si el token es inválido o ha expirado
+   * @example
+   * await authService.resetPassword({ token: 'reset-token-123', newPassword: 'newpass123' });
+   */
   async resetPassword(data: ResetPasswordData): Promise<{ message: string }> {
     const response = await fetch(`${API_URL}/auth/reset-password`, {
       method: "POST",
@@ -85,7 +149,16 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Actualizar perfil de usuario
+  /**
+   * Actualiza los datos del perfil de usuario
+   * @async
+   * @param {string} userId - ID del usuario a actualizar
+   * @param {UpdateUserData} data - Datos a actualizar (nombre, email, edad)
+   * @returns {Promise<User>} Usuario actualizado
+   * @throws {Error} Si el usuario no existe o los datos son inválidos
+   * @example
+   * const updatedUser = await authService.updateUser('user-id-123', { name: 'Juan Carlos' });
+   */
   async updateUser(userId: string, data: UpdateUserData): Promise<User> {
     const response = await fetch(`${API_URL}/users/${userId}`, {
       method: "PUT",
@@ -95,7 +168,17 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Cambiar contraseña
+  /**
+   * Cambia la contraseña del usuario
+   * Requiere la contraseña actual para validar la acción
+   * @async
+   * @param {string} userId - ID del usuario
+   * @param {ChangePasswordData} data - Contraseña actual y nueva contraseña
+   * @returns {Promise<{message: string}>} Mensaje de confirmación
+   * @throws {Error} Si la contraseña actual es incorrecta
+   * @example
+   * await authService.changePassword('user-id-123', { currentPassword: 'old123', newPassword: 'new456' });
+   */
   async changePassword(userId: string, data: ChangePasswordData): Promise<{ message: string }> {
     const response = await fetch(`${API_URL}/users/${userId}/password`, {
       method: "PUT",
@@ -105,7 +188,15 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Eliminar cuenta
+  /**
+   * Elimina permanentemente la cuenta del usuario
+   * @async
+   * @param {User} data - Datos del usuario a eliminar
+   * @returns {Promise<User>} Usuario eliminado
+   * @throws {Error} Si el usuario no existe
+   * @example
+   * await authService.deleteAccount(currentUser);
+   */
   async deleteAccount(data: User): Promise<User> {
     const response = await fetch(`${API_URL}/users/${data.id}`, {
       method: "DELETE",
@@ -114,7 +205,15 @@ export const authService = {
     return handleResponse(response);
   },
 
-  // Logout (invalidar token en backend si es necesario)
+  /**
+   * Cierra la sesión del usuario
+   * Intenta invalidar el token en el backend (si está implementado)
+   * No lanza error si falla, ya que el token local se limpia de todas formas
+   * @async
+   * @returns {Promise<void>}
+   * @example
+   * await authService.logout();
+   */
   async logout(): Promise<void> {
     try {
       await fetch(`${API_URL}/auth/logout`, {

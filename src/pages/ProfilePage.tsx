@@ -1,9 +1,48 @@
+/**
+ * Página de perfil de usuario
+ * Permite ver y editar información personal, cambiar contraseña y gestionar cuenta
+ * 
+ * @module ProfilePage
+ */
+
 import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
 import useUserStore from "../stores/useUserStore";
 import { validatePassword } from "../utils/validators";
 
+/**
+ * Componente de la página de perfil de usuario
+ * Gestiona la información personal y configuración de cuenta
+ * 
+ * @component
+ * @returns {JSX.Element} Página de perfil con modales
+ * 
+ * @description
+ * Características principales:
+ * - Vista de información del perfil (nombre, email, edad)
+ * - Modal de edición de perfil
+ * - Cambio de contraseña con validación
+ * - Confirmación de eliminación de cuenta
+ * - Modal de confirmación de logout
+ * - Validación de contraseña segura
+ * - Manejo de estados de carga
+ * 
+ * Modales disponibles:
+ * - Editar perfil (nombre, email, edad)
+ * - Cambiar contraseña (con validaciones)
+ * - Eliminar cuenta (requiere confirmación)
+ * - Cerrar sesión (con confirmación)
+ * 
+ * @example
+ * ```tsx
+ * <ProtectedRoute>
+ *   <Layout>
+ *     <ProfilePage />
+ *   </Layout>
+ * </ProtectedRoute>
+ * ```
+ */
 const ProfilePage: React.FC = () => {
   const { user, updateUser, deleteAccount, logout, changePassword, isLoading } = useUserStore();
 
@@ -32,7 +71,10 @@ const ProfilePage: React.FC = () => {
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
-  // Actualizar editData cuando el usuario cambie
+  /**
+   * Effect: Actualiza editData cuando el usuario cambia
+   * Sincroniza los datos del formulario con el usuario actual
+   */
   useEffect(() => {
     if (user) {
       setEditData({
@@ -44,6 +86,13 @@ const ProfilePage: React.FC = () => {
     }
   }, [user]);
 
+  /**
+   * Maneja la actualización del perfil
+   * Incluye cambio de contraseña si está activado
+   * 
+   * @async
+   * @throws {Error} Si la actualización falla o las contraseñas no coinciden
+   */
   const handleUpdateProfile = async () => {
     try {
       // Si se está cambiando la contraseña

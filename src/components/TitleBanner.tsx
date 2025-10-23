@@ -1,8 +1,37 @@
+/**
+ * Props para el componente TitleBanner
+ * @typedef {Object} TitleBannerProps
+ * @property {string} title - Título a mostrar en el banner
+ * @property {Function} [onViewMore] - Callback opcional que se ejecuta al hacer click en "Ver más"
+ */
 interface TitleBannerProps {
   title: string;
   onViewMore?: () => void;
 }
 
+/**
+ * Banner de título con botón opcional "Ver más"
+ * Se usa principalmente como encabezado de carruseles de videos
+ * 
+ * @component
+ * @param {TitleBannerProps} props - Props del componente
+ * @returns {JSX.Element} Banner de título renderizado
+ * 
+ * @example
+ * ```tsx
+ * // Con botón "Ver más"
+ * <TitleBanner 
+ *   title="Videos Populares" 
+ *   onViewMore={() => navigate('/search?category=popular')}
+ * />
+ * ```
+ * 
+ * @example
+ * ```tsx
+ * // Sin botón "Ver más"
+ * <TitleBanner title="Mis Videos Favoritos" />
+ * ```
+ */
 const TitleBanner: React.FC<TitleBannerProps> = ({ title, onViewMore }) => {
   return (
     <>

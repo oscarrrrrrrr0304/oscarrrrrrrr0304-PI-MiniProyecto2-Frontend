@@ -1,11 +1,37 @@
 import type { PexelsVideo } from "../types/pexels.types";
 
+/**
+ * Props para el componente VideoCard
+ * @typedef {Object} VideoCardProps
+ * @property {PexelsVideo} video - Objeto de video de Pexels con toda la información del video
+ * @property {Function} [onVideoClick] - Callback opcional que se ejecuta cuando se hace click en el video
+ */
 interface VideoCardProps {
   video: PexelsVideo;
   onVideoClick?: (video: PexelsVideo) => void;
 }
 
+/**
+ * Componente que muestra una tarjeta de video con información básica
+ * Incluye imagen de preview, autor, duración, y métricas de interacción
+ * 
+ * @component
+ * @param {VideoCardProps} props - Props del componente
+ * @returns {JSX.Element} Tarjeta de video renderizada
+ * 
+ * @example
+ * ```tsx
+ * <VideoCard 
+ *   video={pexelsVideo} 
+ *   onVideoClick={(video) => console.log('Video clicked:', video)}
+ * />
+ * ```
+ */
 const VideoCard: React.FC<VideoCardProps> = ({ video, onVideoClick }) => {
+  /**
+   * Maneja el evento de click en la tarjeta
+   * Ejecuta el callback onVideoClick si está definido
+   */
   const handleClick = () => {
     if (onVideoClick) {
     //   onVideoClick(video);

@@ -1,6 +1,6 @@
 /**
- * Página de reproducción de video
- * Muestra el reproductor, información del video y videos relacionados
+ * Video playback page
+ * Displays the player, video information and related videos
  * 
  * @module VideoPage
  */
@@ -13,48 +13,48 @@ import { pexelsService } from "../services/pexels.service";
 import type { PexelsVideo } from "../types/pexels.types";
 
 /**
- * Componente de la página de reproducción de video
- * Layout de 2 columnas con reproductor, info, sistema de likes y videos relacionados
+ * Video playback page component
+ * 2-column layout with player, info, like system and related videos
  * 
  * @component
- * @returns {JSX.Element} Página de reproducción de video
+ * @returns {JSX.Element} Video playback page
  * 
  * @description
- * Estructura del layout:
+ * Layout structure:
  * ```
  * ----------------------------
- * | reproductor | info video |
- * |             | estadísticas|
- * |             | botón like  |
- * | comentarios (sprint futuro) |
- * | videos relacionados        |
+ * | player      | video info |
+ * |             | statistics |
+ * |             | like button|
+ * | comments (future sprint)  |
+ * | related videos            |
  * ----------------------------
  * ```
  * 
- * Características:
- * - Reproductor de video HTML5 con controles
- * - Información del video (autor, duración, dimensiones)
- * - Sistema de "Me Gusta" con toggle (agregar/quitar)
- * - Sincronización con estado global de favoritos
- * - Actualización en tiempo real del contador de likes
- * - Carrusel de videos relacionados basado en tags
- * - Layout responsive (columna en móvil, 2 columnas en desktop)
- * - Navegación desde VideoCard usando _id (MongoDB)
- * - Comentarios planeados para futuro sprint
+ * Features:
+ * - HTML5 video player with controls
+ * - Video information (author, duration, dimensions)
+ * - "Like" system with toggle (add/remove)
+ * - Synchronization with global favorites state
+ * - Real-time likes counter update
+ * - Related videos carousel based on tags
+ * - Responsive layout (column on mobile, 2 columns on desktop)
+ * - Navigation from VideoCard using _id (MongoDB)
+ * - Comments planned for future sprint
  * 
- * Estados gestionados:
- * - video: Información completa del video actual
- * - loading: Estado de carga del video
- * - error: Mensaje de error si falla la carga
- * - isLiking: Indica si se está procesando un like/unlike
- * - hasLiked: Indica si el usuario ya dio like al video
+ * Managed states:
+ * - video: Complete information of current video
+ * - loading: Video loading state
+ * - error: Error message if loading fails
+ * - isLiking: Indicates if a like/unlike is being processed
+ * - hasLiked: Indicates if user already liked the video
  * 
  * @example
  * ```tsx
- * // Navegación desde VideoCard
+ * // Navigation from VideoCard
  * navigate(`/video/${video._id}`)
  * 
- * // Uso en App.tsx
+ * // Usage in App.tsx
  * <ProtectedRoute>
  *   <Layout>
  *     <VideoPage />
@@ -76,22 +76,22 @@ const VideoPage: React.FC = () => {
   const [hasLiked, setHasLiked] = useState(false);
 
   /**
-   * Effect: Carga el video cuando cambia el videoId
-   * Extrae un tag para mostrar videos relacionados
-   * Verifica si el usuario ya dio like a este video
+   * Effect: Loads video when videoId changes
+   * Extracts a tag to show related videos
+   * Checks if user already liked this video
    */
   useEffect(() => {
     if (videoId) {
       loadVideo(videoId);
     }
     
-    // Scroll al inicio al cargar la página
+    // Scroll to top when loading page
     window.scrollTo(0, 0);
   }, [videoId]);
   
   /**
-   * Effect: Actualiza el estado del like cuando cambia moviesLiked
-   * Se ejecuta separadamente para evitar recargar el video
+   * Effect: Updates like state when moviesLiked changes
+   * Runs separately to avoid reloading the video
    */
   useEffect(() => {
     if (videoId && user?.moviesLiked) {
@@ -100,11 +100,11 @@ const VideoPage: React.FC = () => {
   }, [videoId, user?.moviesLiked]);
 
   /**
-   * Carga el video desde la API de Pexels
-   * Extrae el primer tag del video para relacionados
+   * Loads video from Pexels API
+   * Extracts first video tag for related videos
    * 
    * @async
-   * @param {number} id - ID del video de Pexels
+   * @param {string} id - Pexels video ID
    */
   const loadVideo = async (id: string) => {
     try {
@@ -114,38 +114,38 @@ const VideoPage: React.FC = () => {
       const videoData = await pexelsService.getVideoById(id);
       setVideo(videoData);
       
-      // Extraer un tag para videos relacionados
-      // Como Pexels no tiene tags directos, usaremos el URL para extraer una palabra clave
+      // Extract a tag for related videos
+      // Since Pexels doesn't have direct tags, we'll use the URL to extract a keyword
       if (videoData.url) {
         const urlParts = videoData.url.split('/').filter(part => part.length > 0);
         const potentialTag = urlParts[urlParts.length - 1] || "popular";
         setRelatedTag(potentialTag);
       } else {
-        // Si no hay URL, usar "popular" como tag por defecto
+        // If no URL, use "popular" as default tag
         setRelatedTag("popular");
       }
       
     } catch (err) {
-      console.error("Error al cargar video:", err);
-      setError("No se pudo cargar el video");
+      console.error("Error loading video:", err);
+      setError("Could not load video");
     } finally {
       setLoading(false);
     }
   };
 
   /**
-   * Maneja el botón de volver
-   * Navega a la página anterior en el historial
+   * Handles the back button
+   * Navigates to previous page in history
    */
   const handleGoBack = () => {
     navigate(-1);
   };
 
   /**
-   * Maneja dar/quitar "me gusta" al video (toggle)
-   * El backend maneja automáticamente si agregar o quitar
-   * Actualiza el contador de likes en tiempo real
-   * Sincroniza el array moviesLiked con el store global
+   * Handles liking/unliking video (toggle)
+   * Backend automatically handles whether to add or remove
+   * Updates likes counter in real time
+   * Synchronizes moviesLiked array with global store
    * 
    * @async
    */
@@ -155,17 +155,17 @@ const VideoPage: React.FC = () => {
     try {
       setIsLiking(true);
       
-      console.log('Toggle like para video:', videoId, 'Estado actual:', hasLiked ? 'CON like' : 'SIN like');
+      console.log('Toggle like for video:', videoId, 'Current state:', hasLiked ? 'WITH like' : 'WITHOUT like');
       
-      // El backend hace toggle automáticamente con POST
+      // Backend does automatic toggle with POST
       const result = await pexelsService.toggleLikeVideo(videoId);
       
-      console.log('Respuesta del backend:', result);
+      console.log('Backend response:', result);
       
-      // Actualizar estado local del botón inmediatamente
+      // Update button local state immediately
       setHasLiked(result.liked);
       
-      // Actualizar el contador de likes en el video
+      // Update likes counter in video
       if (video) {
         setVideo({
           ...video,
@@ -173,21 +173,21 @@ const VideoPage: React.FC = () => {
         });
       }
       
-      // Actualizar el array moviesLiked en el store global (sin causar re-render del video)
+      // Update moviesLiked array in global store (without causing video re-render)
       const updatedMoviesLiked = result.liked
-        ? [...(user.moviesLiked || []), videoId] // Agregar
-        : (user.moviesLiked || []).filter(id => id !== videoId); // Quitar
+        ? [...(user.moviesLiked || []), videoId] // Add
+        : (user.moviesLiked || []).filter(id => id !== videoId); // Remove
       
       updateMoviesLiked(updatedMoviesLiked);
       
-      console.log('✓ Like actualizado -', result.liked ? 'AGREGADO' : 'QUITADO');
-      console.log('Nuevo total de favoritos:', updatedMoviesLiked.length);
+      console.log('✓ Like updated -', result.liked ? 'ADDED' : 'REMOVED');
+      console.log('New favorites total:', updatedMoviesLiked.length);
       
     } catch (err) {
-      console.error("Error completo al dar/quitar like:", err);
-      console.error("Tipo de error:", typeof err);
-      console.error("Mensaje de error:", err instanceof Error ? err.message : String(err));
-      alert(`Error: ${err instanceof Error ? err.message : 'No se pudo procesar la acción'}`);
+      console.error("Complete error liking/unliking:", err);
+      console.error("Error type:", typeof err);
+      console.error("Error message:", err instanceof Error ? err.message : String(err));
+      alert(`Error: ${err instanceof Error ? err.message : 'Could not process action'}`);
     } finally {
       setIsLiking(false);
     }
@@ -196,7 +196,7 @@ const VideoPage: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-white text-xl">Cargando video...</div>
+        <div className="text-white text-xl">Loading video...</div>
       </div>
     );
   }
@@ -237,7 +237,7 @@ const VideoPage: React.FC = () => {
                 autoPlay
                 src={videoUrl}
               >
-                Tu navegador no soporta el elemento de video.
+                Your browser does not support the video element.
               </video>
             ) : (
               <div className="w-full aspect-video flex flex-col items-center justify-center bg-gray-800 text-white">
@@ -283,7 +283,7 @@ const VideoPage: React.FC = () => {
                 href={video.user.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-lightblue hover:underline text-lg"
+                className="text-green hover:underline text-lg"
               >
                 {video.user.name}
               </a>
@@ -366,8 +366,8 @@ const VideoPage: React.FC = () => {
                 disabled={isLiking}
                 className={`w-full mt-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
                   hasLiked
-                    ? 'bg-red hover:bg-red-700 text-white'
-                    : 'bg-blue hover:bg-lightblue text-white'
+                    ? 'bg-red-dark hover:bg-red-medium text-white'
+                    : 'bg-blue-medium hover:bg-blue text-white'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <svg

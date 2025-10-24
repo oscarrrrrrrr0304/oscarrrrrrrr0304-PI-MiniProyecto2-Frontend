@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
 /**
- * Props para el componente Modal
+ * Props for the Modal component
  * @typedef {Object} ModalProps
- * @property {boolean} isOpen - Estado de apertura del modal
- * @property {Function} onClose - Callback que se ejecuta para cerrar el modal
- * @property {ReactNode} children - Contenido del modal
+ * @property {boolean} isOpen - Modal open state
+ * @property {Function} onClose - Callback executed to close the modal
+ * @property {ReactNode} children - Modal content
  */
 interface ModalProps {
   isOpen: boolean;
@@ -14,30 +14,30 @@ interface ModalProps {
 }
 
 /**
- * Componente de modal genérico reutilizable
- * Incluye backdrop oscuro, centrado en pantalla y cierre al hacer click fuera
- * El modal no se renderiza si isOpen es false
+ * Reusable generic modal component
+ * Includes dark backdrop, screen centering, and close on outside click
+ * Modal is not rendered if isOpen is false
  * 
  * @component
- * @param {ModalProps} props - Props del componente
- * @returns {JSX.Element | null} Modal renderizado o null si está cerrado
+ * @param {ModalProps} props - Component props
+ * @returns {JSX.Element | null} Rendered modal or null if closed
  * 
  * @example
  * ```tsx
  * <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
- *   <h2>Título del Modal</h2>
- *   <p>Contenido del modal aquí</p>
- *   <button onClick={() => setShowModal(false)}>Cerrar</button>
+ *   <h2>Modal Title</h2>
+ *   <p>Modal content here</p>
+ *   <button onClick={() => setShowModal(false)}>Close</button>
  * </Modal>
  * ```
  * 
  * @description
- * Características:
- * - Backdrop oscuro (bg-black/80)
- * - Centrado con flexbox
- * - Cierre al hacer click en el backdrop
- * - stopPropagation para prevenir cierre al hacer click en el contenido
- * - z-index alto (2000) para estar sobre otros elementos
+ * Features:
+ * - Dark backdrop (bg-black/80)
+ * - Centered with flexbox
+ * - Close on backdrop click
+ * - stopPropagation to prevent close on content click
+ * - High z-index (2000) to be above other elements
  */
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;

@@ -1,6 +1,6 @@
 /**
- * Página principal de la aplicación (Home)
- * Muestra múltiples carruseles de videos organizados por categorías
+ * Main application page (Home)
+ * Displays multiple video carousels organized by categories
  * 
  * @module HomePage
  */
@@ -9,23 +9,23 @@ import { Link } from "react-router-dom";
 import VideosCarousel from "../components/VideosCarousel";
 
 /**
- * Componente de la página principal
- * Renderiza carruseles de videos por categoría
+ * Main page component
+ * Renders video carousels by category
  * 
  * @component
- * @returns {JSX.Element} Página de inicio con carruseles de videos
+ * @returns {JSX.Element} Home page with video carousels
  * 
  * @description
- * Características principales:
- * - 8 categorías de videos: Populares, Entretenimiento, Viajes, Música, Moda, Videojuegos, Tecnología, Deportes
- * - Cada categoría tiene su propio carrusel horizontal
- * - Click en video navega a la página de detalle del video
- * - Footer con enlaces a Sobre Nosotros y Mapa del Sitio
- * - Diseño responsive con padding y espaciado adaptativo
+ * Main features:
+ * - 8 video categories: Popular, Entertainment, Travel, Music, Fashion, Games, Technology, Sports
+ * - Each category has its own horizontal carousel
+ * - Clicking on a video navigates to the video detail page
+ * - Footer with links to About Us and Site Map
+ * - Responsive design with adaptive padding and spacing
  * 
  * @example
  * ```tsx
- * // Uso en App.tsx
+ * // Usage in App.tsx
  * <ProtectedRoute>
  *   <Layout>
  *     <HomePage />
@@ -36,7 +36,7 @@ import VideosCarousel from "../components/VideosCarousel";
 const HomePage: React.FC = () => {
 
   /**
-   * Configuración de categorías de videos
+   * Video categories configuration
    * @constant {Array<{title: string, category?: string, isPopular?: boolean}>}
    */
   const categories = [

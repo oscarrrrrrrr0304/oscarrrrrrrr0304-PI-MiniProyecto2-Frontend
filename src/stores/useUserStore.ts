@@ -1,6 +1,6 @@
 /**
- * Store de Zustand para la gestión del estado de autenticación de usuario
- * Incluye persistencia en localStorage para mantener la sesión
+ * Zustand store for user authentication state management
+ * Includes localStorage persistence to maintain session
  * 
  * @module useUserStore
  */
@@ -19,16 +19,16 @@ import type {
 } from "../types/auth.types.js";
 
 /**
- * Interface del estado de autenticación
+ * Authentication state interface
  * @interface AuthState
- * @property {User | null} user - Usuario autenticado actual (incluye id, name, email, age, moviesLiked), null si no hay sesión
- * @property {string | null} token - Token JWT de autenticación
- * @property {boolean} isAuthenticated - Estado de autenticación del usuario
- * @property {boolean} isLoading - Indica si hay una operación en progreso
- * @property {string | null} error - Mensaje de error si hubo un problema
+ * @property {User | null} user - Current authenticated user (includes id, name, email, age, moviesLiked), null if no session
+ * @property {string | null} token - JWT authentication token
+ * @property {boolean} isAuthenticated - User authentication status
+ * @property {boolean} isLoading - Indicates if an operation is in progress
+ * @property {string | null} error - Error message if there was a problem
  */
 interface AuthState {
-  // Estado
+  // State
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
@@ -36,106 +36,106 @@ interface AuthState {
   error: string | null;
 
   /**
-   * Inicia sesión con credenciales
-   * @param {LoginCredentials} credentials - Email y contraseña
+   * Logs in with credentials
+   * @param {LoginCredentials} credentials - Email and password
    * @returns {Promise<void>}
-   * @throws {Error} Si las credenciales son inválidas
+   * @throws {Error} If credentials are invalid
    */
   login: (credentials: LoginCredentials) => Promise<void>;
   
   /**
-   * Registra un nuevo usuario
-   * @param {RegisterData} data - Datos del nuevo usuario
+   * Registers a new user
+   * @param {RegisterData} data - New user data
    * @returns {Promise<void>}
-   * @throws {Error} Si el email ya está registrado
+   * @throws {Error} If email is already registered
    */
   register: (data: RegisterData) => Promise<void>;
   
   /**
-   * Cierra la sesión del usuario
+   * Logs out the user
    * @returns {Promise<void>}
    */
   logout: () => Promise<void>;
   
   /**
-   * Solicita recuperación de contraseña por email
-   * @param {ForgotPasswordData} data - Email del usuario
+   * Requests password recovery by email
+   * @param {ForgotPasswordData} data - User email
    * @returns {Promise<void>}
-   * @throws {Error} Si el email no está registrado
+   * @throws {Error} If email is not registered
    */
   forgotPassword: (data: ForgotPasswordData) => Promise<void>;
   
   /**
-   * Resetea la contraseña con un token
-   * @param {ResetPasswordData} data - Token y nueva contraseña
+   * Resets password with a token
+   * @param {ResetPasswordData} data - Token and new password
    * @returns {Promise<void>}
-   * @throws {Error} Si el token es inválido
+   * @throws {Error} If token is invalid
    */
   resetPassword: (data: ResetPasswordData) => Promise<void>;
   
   /**
-   * Actualiza los datos del perfil de usuario
-   * @param {UpdateUserData} data - Datos a actualizar
+   * Updates user profile data
+   * @param {UpdateUserData} data - Data to update
    * @returns {Promise<void>}
-   * @throws {Error} Si el usuario no está autenticado o los datos son inválidos
+   * @throws {Error} If user is not authenticated or data is invalid
    */
   updateUser: (data: UpdateUserData) => Promise<void>;
   
   /**
-   * Cambia la contraseña del usuario
-   * @param {ChangePasswordData} data - Contraseña actual y nueva
+   * Changes user password
+   * @param {ChangePasswordData} data - Current password and new password
    * @returns {Promise<void>}
-   * @throws {Error} Si la contraseña actual es incorrecta
+   * @throws {Error} If current password is incorrect
    */
   changePassword: (data: ChangePasswordData) => Promise<void>;
   
   /**
-   * Elimina permanentemente la cuenta del usuario
+   * Permanently deletes the user account
    * @returns {Promise<void>}
-   * @throws {Error} Si el usuario no está autenticado
+   * @throws {Error} If user is not authenticated
    */
   deleteAccount: () => Promise<void>;
   
   /**
-   * Verifica la validez del token JWT almacenado
-   * Se ejecuta al cargar la aplicación para auto-login
+   * Verifies stored JWT token validity
+   * Executed on app load for auto-login
    * @returns {Promise<void>}
    */
   verifyToken: () => Promise<void>;
   
   /**
-   * Limpia el mensaje de error del estado
+   * Clears the error message from state
    * @returns {void}
    */
   clearError: () => void;
   
   /**
-   * Establece manualmente el usuario en el estado
-   * @param {User} user - Usuario a establecer
+   * Manually sets the user in state
+   * @param {User} user - User to set
    * @returns {void}
    */
   setUser: (user: User) => void;
   
   /**
-   * Actualiza el array de videos favoritos del usuario
-   * Optimizado para evitar re-renders innecesarios
-   * @param {string[]} moviesLiked - Array actualizado de IDs de videos favoritos
+   * Updates the user's favorite videos array
+   * Optimized to avoid unnecessary re-renders
+   * @param {string[]} moviesLiked - Updated array of favorite video IDs
    * @returns {void}
    */
   updateMoviesLiked: (moviesLiked: string[]) => void;
 }
 
 /**
- * Hook de Zustand para el estado de autenticación
- * Incluye middleware de persistencia para guardar usuario, token e isAuthenticated en localStorage
+ * Zustand hook for authentication state
+ * Includes persistence middleware to save user, token, and isAuthenticated in localStorage
  * 
  * @example
  * ```tsx
  * const { user, isAuthenticated, login, logout } = useUserStore();
  * 
- * // Usar en componente
+ * // Use in component
  * if (isAuthenticated) {
- *   console.log('Usuario:', user.name);
+ *   console.log('User:', user.name);
  * }
  * 
  * // Login
@@ -145,7 +145,7 @@ interface AuthState {
 const useUserStore = create<AuthState>()(
   persist(
     (set) => ({
-      // Estado inicial
+      // Initial state
       user: null,
       token: null,
       isAuthenticated: false,
@@ -158,8 +158,8 @@ const useUserStore = create<AuthState>()(
         try {
           const response = await authService.login(credentials);
           
-          console.log('✓ Login exitoso -', response.user.name);
-          console.log('Videos favoritos:', response.user.moviesLiked?.length || 0);
+          console.log('✓ Login successful -', response.user.name);
+          console.log('Favorite videos:', response.user.moviesLiked?.length || 0);
           
           localStorage.setItem("token", response.token);
           set({
@@ -170,7 +170,7 @@ const useUserStore = create<AuthState>()(
             error: null,
           });
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : "Error al iniciar sesión";
+          const errorMessage = error instanceof Error ? error.message : "Login error";
           set({
             error: errorMessage,
             isLoading: false,
@@ -179,7 +179,7 @@ const useUserStore = create<AuthState>()(
         }
       },
 
-      // Registro
+      // Register
       register: async (data: RegisterData) => {
         set({ isLoading: true, error: null });
         try {
@@ -193,7 +193,7 @@ const useUserStore = create<AuthState>()(
             error: null,
           });
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : "Error al registrarse";
+          const errorMessage = error instanceof Error ? error.message : "Registration error";
           set({
             error: errorMessage,
             isLoading: false,
@@ -204,8 +204,8 @@ const useUserStore = create<AuthState>()(
 
       // Logout
       logout: async () => {
-        // Con JWT no necesitamos llamar al backend
-        // Solo limpiamos el estado local y el token
+        // With JWT we don't need to call the backend
+        // Just clear local state and token
         localStorage.removeItem("token");
         set({
           user: null,
@@ -216,17 +216,17 @@ const useUserStore = create<AuthState>()(
         });
       },
 
-      // Recuperación de contraseña
+      // Password recovery
       forgotPassword: async (data: ForgotPasswordData) => {
         set({ isLoading: true, error: null });
         try {
-          console.log("Store: Iniciando forgotPassword con:", data);
+          console.log("Store: Starting forgotPassword with:", data);
           const result = await authService.forgotPassword(data);
-          console.log("Store: Respuesta recibida:", result);
+          console.log("Store: Response received:", result);
           set({ isLoading: false });
         } catch (error: unknown) {
-          console.error("Store: Error en forgotPassword:", error);
-          const errorMessage = error instanceof Error ? error.message : "Error al enviar correo de recuperación";
+          console.error("Store: Error in forgotPassword:", error);
+          const errorMessage = error instanceof Error ? error.message : "Error sending recovery email";
           set({
             error: errorMessage,
             isLoading: false,
@@ -235,14 +235,14 @@ const useUserStore = create<AuthState>()(
         }
       },
 
-      // Resetear contraseña
+      // Reset password
       resetPassword: async (data: ResetPasswordData) => {
         set({ isLoading: true, error: null });
         try {
           await authService.resetPassword(data);
           set({ isLoading: false });
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : "Error al resetear la contraseña";
+          const errorMessage = error instanceof Error ? error.message : "Error resetting password";
           set({
             error: errorMessage,
             isLoading: false,
@@ -251,38 +251,38 @@ const useUserStore = create<AuthState>()(
         }
       },
 
-      // Actualizar usuario
+      // Update user
       updateUser: async (data: UpdateUserData) => {
         const state = useUserStore.getState();
         const userId = state.user?.id;
         const currentUser = state.user;
         
         if (!userId || !currentUser) {
-          throw new Error("No se encontró el usuario. Por favor, vuelve a iniciar sesión.");
+          throw new Error("User not found. Please log in again.");
         }
 
         set({ isLoading: true, error: null });
         try {
           const updatedUser = await authService.updateUser(userId, data);
           
-          // Crear un nuevo objeto de usuario con los datos actualizados
-          // Mantener moviesLiked y otros campos que no se actualizan
+          // Create a new user object with updated data
+          // Keep moviesLiked and other fields that are not updated
           const newUserData: User = {
             id: userId,
             name: updatedUser.name ?? data.name ?? currentUser.name,
             email: updatedUser.email ?? data.email ?? currentUser.email,
             age: updatedUser.age ?? data.age ?? currentUser.age,
-            moviesLiked: updatedUser.moviesLiked ?? currentUser.moviesLiked, // Preservar moviesLiked
+            moviesLiked: updatedUser.moviesLiked ?? currentUser.moviesLiked, // Preserve moviesLiked
           };
           
-          // Actualizar el estado con un nuevo objeto para forzar la re-renderización
+          // Update state with a new object to force re-render
           set({
-            user: { ...newUserData }, // Crear una nueva referencia del objeto
+            user: { ...newUserData }, // Create a new object reference
             isLoading: false,
             error: null,
           });
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : "Error al actualizar perfil";
+          const errorMessage = error instanceof Error ? error.message : "Error updating profile";
           set({
             error: errorMessage,
             isLoading: false,
@@ -291,13 +291,13 @@ const useUserStore = create<AuthState>()(
         }
       },
 
-      // Cambiar contraseña
+      // Change password
       changePassword: async (data: ChangePasswordData) => {
         const state = useUserStore.getState();
         const userId = state.user?.id;
         
         if (!userId) {
-          throw new Error("No se encontró el usuario. Por favor, vuelve a iniciar sesión.");
+          throw new Error("User not found. Please log in again.");
         }
 
         set({ isLoading: true, error: null });
@@ -308,7 +308,7 @@ const useUserStore = create<AuthState>()(
             error: null,
           });
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : "Error al cambiar contraseña";
+          const errorMessage = error instanceof Error ? error.message : "Error changing password";
           set({
             error: errorMessage,
             isLoading: false,
@@ -317,13 +317,13 @@ const useUserStore = create<AuthState>()(
         }
       },
 
-      // Eliminar cuenta
+      // Delete account
       deleteAccount: async () => {
         const state = useUserStore.getState();
         const currentUser = state.user;
         
         if (!currentUser || !currentUser.id) {
-          throw new Error("No se encontró el usuario. Por favor, vuelve a iniciar sesión.");
+          throw new Error("User not found. Please log in again.");
         }
 
         set({ isLoading: true, error: null });
@@ -338,7 +338,7 @@ const useUserStore = create<AuthState>()(
             error: null,
           });
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : "Error al eliminar cuenta";
+          const errorMessage = error instanceof Error ? error.message : "Error deleting account";
           set({
             error: errorMessage,
             isLoading: false,
@@ -347,21 +347,21 @@ const useUserStore = create<AuthState>()(
         }
       },
 
-      // Verificar token (auto-login)
+      // Verify token (auto-login)
       verifyToken: async () => {
         const state = useUserStore.getState();
         const token = localStorage.getItem("token");
         
-        // Si no hay token, marcar como no autenticado
+        // If no token, mark as not authenticated
         if (!token) {
           set({ isAuthenticated: false, isLoading: false });
           return;
         }
 
-        // Si ya hay un usuario en el estado (de la persistencia), no hacer nada
+        // If there's already a user in state (from persistence), do nothing
         if (state.user && state.isAuthenticated) {
-          console.log("✓ Usuario autenticado -", state.user.name);
-          console.log("Videos favoritos:", state.user.moviesLiked?.length || 0);
+          console.log("✓ User authenticated -", state.user.name);
+          console.log("Favorite videos:", state.user.moviesLiked?.length || 0);
           set({ isLoading: false });
           return;
         }
@@ -370,8 +370,8 @@ const useUserStore = create<AuthState>()(
         try {
           const user = await authService.verifyToken();
           
-          console.log('✓ Token verificado -', user.name);
-          console.log('Videos favoritos:', user.moviesLiked?.length || 0);
+          console.log('✓ Token verified -', user.name);
+          console.log('Favorite videos:', user.moviesLiked?.length || 0);
           
           set({
             user,
@@ -381,9 +381,9 @@ const useUserStore = create<AuthState>()(
             error: null,
           });
         } catch (error) {
-          console.error("Error al verificar token:", error);
-          // Solo limpiar si realmente falla la verificación
-          // Comentamos esto para no cerrar sesión automáticamente
+          console.error("Error verifying token:", error);
+          // Only clear if verification truly fails
+          // We comment this to not auto-logout
           // localStorage.removeItem("token");
           // set({
           //   user: null,
@@ -393,18 +393,18 @@ const useUserStore = create<AuthState>()(
           //   error: null,
           // });
           
-          // En su lugar, mantener el estado actual de la persistencia
+          // Instead, maintain current state from persistence
           set({ isLoading: false });
         }
       },
 
-      // Utilidades
+      // Utilities
       clearError: () => set({ error: null }),
       setUser: (user: User) => set({ user }),
       
       /**
-       * Actualiza solo el array moviesLiked sin afectar otros campos
-       * Optimizado para evitar re-renders del componente VideoPage
+       * Updates only the moviesLiked array without affecting other fields
+       * Optimized to avoid re-renders of the VideoPage component
        */
       updateMoviesLiked: (moviesLiked: string[]) => {
         const state = useUserStore.getState();
@@ -419,7 +419,7 @@ const useUserStore = create<AuthState>()(
       },
     }),
     {
-      name: "user-storage", // nombre en localStorage
+      name: "user-storage", // name in localStorage
       partialize: (state) => ({
         user: state.user,
         token: state.token,

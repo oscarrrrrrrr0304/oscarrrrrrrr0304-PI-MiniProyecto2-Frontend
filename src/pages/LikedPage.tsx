@@ -1,6 +1,6 @@
 /**
- * Página de videos con "Me Gusta"
- * Muestra los videos a los que el usuario ha dado "Me Gusta"
+ * "Liked Videos" page
+ * Shows videos that the user has "liked"
  * 
  * @module LikedPage
  */
@@ -12,19 +12,19 @@ import { pexelsService } from "../services/pexels.service";
 import type { PexelsVideo } from "../types/pexels.types";
 
 /**
- * Componente de la página de videos con "Me Gusta"
- * Muestra todos los videos a los que el usuario ha dado "Me Gusta"
+ * Liked videos page component
+ * Shows all videos that the user has liked
  * 
  * @component
- * @returns {JSX.Element} Página de videos con "Me Gusta"
+ * @returns {JSX.Element} Liked videos page
  * 
  * @description
- * Características:
- * - Carga los IDs de videos desde user.moviesLiked
- * - Obtiene la información completa de cada video del backend
- * - Muestra los videos en un grid responsive
- * - Maneja estados de carga y error
- * - Muestra mensaje si no hay videos con "Me Gusta"
+ * Features:
+ * - Loads video IDs from user.moviesLiked
+ * - Gets complete information for each video from backend
+ * - Displays videos in responsive grid
+ * - Handles loading and error states
+ * - Shows message if no liked videos
  * 
  * @example
  * ```tsx
@@ -42,8 +42,8 @@ const LikedPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Carga los videos con "Me Gusta" del usuario
-   * Obtiene cada video por su ID desde el backend
+   * Loads user's liked videos
+   * Gets each video by its ID from backend
    */
   useEffect(() => {
     const loadLikedVideos = async () => {
@@ -51,16 +51,16 @@ const LikedPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Verificar si el usuario tiene videos con "Me Gusta"
+        // Check if user has liked videos
         if (!user?.moviesLiked || user.moviesLiked.length === 0) {
           setLikedVideos([]);
           setLoading(false);
           return;
         }
 
-        console.log(`Cargando ${user.moviesLiked.length} videos con "Me Gusta"...`);
+        console.log(`Loading ${user.moviesLiked.length} liked videos...`);
 
-        // Cargar cada video por su ID
+        // Load each video by its ID
         const videoPromises = user.moviesLiked.map((videoId) =>
           pexelsService.getVideoById(videoId)
         );
@@ -68,10 +68,10 @@ const LikedPage: React.FC = () => {
         const videos = await Promise.all(videoPromises);
         setLikedVideos(videos);
         
-        console.log(`✓ ${videos.length} videos con "Me Gusta" cargados exitosamente`);
+        console.log(`✓ ${videos.length} liked videos loaded successfully`);
       } catch (err) {
-        console.error("Error al cargar videos con Me Gusta:", err);
-        setError("No se pudieron cargar los videos");
+        console.error("Error loading liked videos:", err);
+        setError("Could not load videos");
       } finally {
         setLoading(false);
       }

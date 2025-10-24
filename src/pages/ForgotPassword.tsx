@@ -1,6 +1,6 @@
 /**
- * Página de recuperación de contraseña
- * Permite solicitar un correo para resetear la contraseña olvidada
+ * Password recovery page
+ * Allows requesting an email to reset forgotten password
  * 
  * @module ForgotPassword
  */
@@ -11,27 +11,27 @@ import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
 
 /**
- * Componente de la página de recuperación de contraseña
- * Envía un correo electrónico con un link para resetear la contraseña
+ * Password recovery page component
+ * Sends an email with a link to reset the password
  * 
  * @component
- * @returns {JSX.Element} Página de recuperación de contraseña
+ * @returns {JSX.Element} Password recovery page
  * 
  * @description
- * Características:
- * - Formulario simple con solo email
- * - Video de fondo rotativo
- * - Mensaje de éxito al enviar correo
- * - Manejo de errores visuales
- * - Loading state durante el envío
- * - Enlace para volver al login
+ * Features:
+ * - Simple form with email only
+ * - Rotating background video
+ * - Success message after sending email
+ * - Visual error handling
+ * - Loading state during submission
+ * - Link to return to login
  * - Responsive design
  * 
- * Flujo:
- * 1. Usuario ingresa email
- * 2. Sistema envía correo con token
- * 3. Usuario recibe link para resetear contraseña
- * 4. Redirección a ResetPassword con token
+ * Flow:
+ * 1. User enters email
+ * 2. System sends email with token
+ * 3. User receives link to reset password
+ * 4. Redirect to ResetPassword with token
  * 
  * @example
  * ```tsx
@@ -42,7 +42,7 @@ import useUserStore from "../stores/useUserStore";
  */
 const ForgotPassword: React.FC = () => {
   /**
-   * Array de rutas de videos para el fondo
+   * Array of video paths for the background
    * @constant {string[]}
    */
   const videos = [
@@ -62,8 +62,8 @@ const ForgotPassword: React.FC = () => {
   const { forgotPassword, isLoading, error, clearError } = useUserStore();
 
   /**
-   * Maneja el evento de finalización del video
-   * Cambia al siguiente video en el array de forma circular
+   * Handles the video end event
+   * Changes to the next video in the array in a circular manner
    */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
@@ -71,11 +71,11 @@ const ForgotPassword: React.FC = () => {
   };
 
   /**
-   * Maneja el envío del formulario de recuperación
-   * Envía email con link de reseteo de contraseña
+   * Handles the recovery form submission
+   * Sends email with password reset link
    * 
    * @async
-   * @param {FormEvent} e - Evento del formulario
+   * @param {FormEvent} e - Form event
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -129,14 +129,14 @@ const ForgotPassword: React.FC = () => {
             />
             <button
               type="submit"
-              className="bg-green text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-medium text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? "Enviando..." : "Enviar Enlace"}
             </button>
           </form>
         </div>
-        <Link to="/login" className="text-lightblue font-semibold">
+        <Link to="/login" className="text-green font-semibold">
           Volver al inicio de sesión
         </Link>
       </div>

@@ -1,6 +1,6 @@
 /**
- * Página de inicio de sesión
- * Permite a los usuarios autenticarse en la aplicación
+ * Login page
+ * Allows users to authenticate in the application
  * 
  * @module LoginPage
  */
@@ -11,25 +11,25 @@ import { useState, useRef, type FormEvent } from "react";
 import useUserStore from "../stores/useUserStore";
 
 /**
- * Componente de la página de Login
- * Incluye formulario de autenticación con email y contraseña
- * Muestra video de fondo que rota automáticamente
+ * Login page component
+ * Includes authentication form with email and password
+ * Displays rotating background video
  * 
  * @component
- * @returns {JSX.Element} Página de inicio de sesión
+ * @returns {JSX.Element} Login page
  * 
  * @description
- * Características:
- * - Formulario con validación de email y contraseña
- * - Video de fondo rotativo (4 videos)
- * - Manejo de errores con mensajes visuales
- * - Loading state durante la autenticación
- * - Enlaces a registro y recuperación de contraseña
- * - Responsive design (móvil y desktop)
+ * Features:
+ * - Form with email and password validation
+ * - Rotating background video (4 videos)
+ * - Error handling with visual messages
+ * - Loading state during authentication
+ * - Links to registration and password recovery
+ * - Responsive design (mobile and desktop)
  * 
  * @example
  * ```tsx
- * // Uso en App.tsx
+ * // Usage in App.tsx
  * <PublicRoute>
  *   <LoginPage />
  * </PublicRoute>
@@ -37,7 +37,7 @@ import useUserStore from "../stores/useUserStore";
  */
 const LoginPage: React.FC = () => {
   /**
-   * Array de rutas de videos para el fondo
+   * Array of video paths for the background
    * @constant {string[]}
    */
   const videos = [
@@ -49,7 +49,7 @@ const LoginPage: React.FC = () => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Estados del formulario
+  // Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
@@ -58,8 +58,8 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   /**
-   * Maneja el evento de finalización del video
-   * Cambia al siguiente video en el array de forma circular
+   * Handles the video end event
+   * Changes to the next video in the array in a circular manner
    */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
@@ -67,11 +67,11 @@ const LoginPage: React.FC = () => {
   };
 
   /**
-   * Maneja el envío del formulario de login
-   * Intenta autenticar al usuario y redirige a /home si es exitoso
+   * Handles the login form submission
+   * Attempts to authenticate the user and redirects to /home if successful
    * 
    * @async
-   * @param {FormEvent} e - Evento del formulario
+   * @param {FormEvent} e - Form event
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -79,10 +79,10 @@ const LoginPage: React.FC = () => {
 
     try {
       await login({ email, password });
-      // Si el login es exitoso, redirige al home
+      // If login is successful, redirect to home
       navigate("/home");
     } catch (error) {
-      // El error ya está manejado en el store
+      // Error is already handled in the store
       console.error("Error en login:", error);
     }
   };
@@ -124,14 +124,14 @@ const LoginPage: React.FC = () => {
               />
               <Link
                 to="/forgot-password"
-                className="text-sm text-lightblue self-end font-semibold"
+                className="text-sm text-green self-end font-semibold"
               >
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
             <button
               type="submit"
-              className="bg-green text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-medium text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
@@ -140,7 +140,7 @@ const LoginPage: React.FC = () => {
         </div>
         <p>
           ¿No tienes una cuenta?{" "}
-          <Link to="/register" className="text-lightblue font-semibold">
+          <Link to="/register" className="text-green font-semibold">
             Crear una cuenta
           </Link>
         </p>

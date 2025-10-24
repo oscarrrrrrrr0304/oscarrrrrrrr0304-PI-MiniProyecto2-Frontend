@@ -1,6 +1,6 @@
 /**
- * Página de búsqueda y filtrado de videos
- * Permite buscar videos por categoría con scroll infinito
+ * Video search and filtering page
+ * Allows searching videos by category with infinite scroll
  * 
  * @module SearchPage
  */
@@ -12,39 +12,39 @@ import { pexelsService } from "../services/pexels.service";
 import type { PexelsVideo } from "../types/pexels.types";
 
 /**
- * Componente de la página de búsqueda
- * Implementa búsqueda por categoría con paginación infinita usando Intersection Observer
+ * Search page component
+ * Implements category search with infinite pagination using Intersection Observer
  * 
  * @component
- * @returns {JSX.Element} Página de búsqueda con filtros y resultados
+ * @returns {JSX.Element} Search page with filters and results
  * 
  * @description
- * Características principales:
- * - Barra de búsqueda con formulario
- * - Filtros por categoría vía query params (?category=...)
- * - Badge de filtro activo con botón para remover
- * - Infinite scroll con Intersection Observer
- * - Paginación automática al llegar al final
- * - Layout flex-wrap responsive
- * - Scroll reset al cambiar de categoría
- * - Videos populares por defecto si no hay filtro
- * - Click en video navega a la página de detalle
+ * Main features:
+ * - Search bar with form
+ * - Category filters via query params (?category=...)
+ * - Active filter badge with remove button
+ * - Infinite scroll with Intersection Observer
+ * - Automatic pagination when reaching the end
+ * - Responsive flex-wrap layout
+ * - Scroll reset when changing category
+ * - Popular videos by default if no filter
+ * - Clicking on video navigates to detail page
  * 
- * Estados gestionados:
- * - activeFilter: Categoría actual desde URL params
- * - searchQuery: Texto del input de búsqueda
- * - videos: Array de videos cargados
- * - page: Página actual para paginación
- * - hasMore: Si hay más videos para cargar
- * - loading: Estado de carga
- * - error: Mensaje de error si falla la carga
+ * Managed states:
+ * - activeFilter: Current category from URL params
+ * - searchQuery: Search input text
+ * - videos: Array of loaded videos
+ * - page: Current page for pagination
+ * - hasMore: If there are more videos to load
+ * - loading: Loading state
+ * - error: Error message if loading fails
  * 
  * @example
  * ```tsx
- * // Navegación desde HomePage
+ * // Navigation from HomePage
  * navigate('/search?category=entertainment');
  * 
- * // Uso en App.tsx
+ * // Usage in App.tsx
  * <ProtectedRoute>
  *   <Layout>
  *     <SearchPage />
@@ -67,12 +67,12 @@ const SearchPage: React.FC = () => {
   const observer = useRef<IntersectionObserver | null>(null);
   
   /**
-   * Callback ref para el último elemento de video
-   * Implementa Intersection Observer para detectar cuando el usuario llega al final
-   * y cargar más videos automáticamente
+   * Callback ref for the last video element
+   * Implements Intersection Observer to detect when user reaches the end
+   * and automatically load more videos
    * 
    * @callback lastVideoElementRef
-   * @param {HTMLDivElement | null} node - Elemento DOM del último video
+   * @param {HTMLDivElement | null} node - DOM element of last video
    */
   const lastVideoElementRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -114,11 +114,11 @@ const SearchPage: React.FC = () => {
   }, [activeFilter, page]);
 
   /**
-   * Carga videos desde la API de Pexels
-   * Usa videos populares por defecto o busca por categoría
+   * Loads videos from Pexels API
+   * Uses popular videos by default or searches by category
    * 
    * @async
-   * @throws {Error} Si falla la carga de videos
+   * @throws {Error} If video loading fails
    */
   const loadVideos = async () => {
     try {
@@ -126,7 +126,7 @@ const SearchPage: React.FC = () => {
       setError(null);
 
       let response;
-      // Si no hay filtro activo, mostrar videos populares
+      // If no active filter, show popular videos
       if (!activeFilter || activeFilter === 'popular') {
         response = await pexelsService.getPopularVideos(page, 15);
       } else {
@@ -139,19 +139,19 @@ const SearchPage: React.FC = () => {
         setVideos((prev) => [...prev, ...response.videos]);
       }
     } catch (err) {
-      console.error("Error al cargar videos:", err);
-      setError("Error al cargar videos");
+      console.error("Error loading videos:", err);
+      setError("Error loading videos");
     } finally {
       setLoading(false);
     }
   };
 
   /**
-   * Maneja el envío del formulario de búsqueda
-   * Actualiza los query params con la categoría buscada
-   * Usa { replace: true } para no crear múltiples entradas en el historial
+   * Handles search form submission
+   * Updates query params with searched category
+   * Uses { replace: true } to avoid creating multiple history entries
    * 
-   * @param {React.FormEvent} e - Evento del formulario
+   * @param {React.FormEvent} e - Form event
    */
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,20 +162,22 @@ const SearchPage: React.FC = () => {
   };
 
   /**
-   * Remueve el filtro activo
-   * Navega a /search sin query params
+   * Removes active filter
+   * Navigates to /search without query params
    */
   const handleRemoveFilter = () => {
     navigate('/search');
   };
 
   /**
-   * Obtiene el label formateado del filtro activo
-   * @returns {string | null} Label capitalizado o null si no hay filtro
+   * Gets formatted label from active filter
+   * Capitalizes first letter of the filter
+   * 
+   * @returns {string | null} Capitalized label or null if no filter
    */
   const getFilterLabel = () => {
     if (!activeFilter) return null;
-    if (activeFilter === 'popular') return 'Populares';
+    if (activeFilter === 'popular') return 'Popular';
     return activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1);
   };
 

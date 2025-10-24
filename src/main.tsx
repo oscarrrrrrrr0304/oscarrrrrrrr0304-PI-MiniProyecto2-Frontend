@@ -1,6 +1,6 @@
 /**
- * Punto de entrada de la aplicación React
- * Renderiza el componente App en el DOM
+ * React application entry point
+ * Renders the App component in the DOM
  * 
  * @module main
  */
@@ -11,16 +11,16 @@ import App from "./App.tsx";
 import "./index.css";
 
 /**
- * Crea la raíz de React y renderiza la aplicación en el elemento con id "root"
- * Se usa React.StrictMode para detectar problemas potenciales en la aplicación
+ * Creates the React root and renders the application in the element with id "root"
+ * Uses React.StrictMode to detect potential problems in the application
  * 
  * @description
- * React.StrictMode activa verificaciones y advertencias adicionales:
- * - Detecta componentes con efectos secundarios inseguros
- * - Advierte sobre APIs deprecadas
- * - Detecta renderizados inesperados
+ * React.StrictMode activates additional checks and warnings:
+ * - Detects components with unsafe side effects
+ * - Warns about deprecated APIs
+ * - Detects unexpected renders
  * 
- * Solo afecta el modo de desarrollo, no tiene impacto en producción
+ * Only affects development mode, has no impact on production
  */
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

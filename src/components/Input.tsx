@@ -1,15 +1,15 @@
 import type { ChangeEvent } from "react";
 
 /**
- * Props para el componente Input
+ * Props for the Input component
  * @typedef {Object} InputProps
- * @property {string} type - Tipo de input HTML (text, email, password, number, etc.)
- * @property {string} id - ID único del input para asociar con el label
- * @property {string} label - Texto del label que se muestra encima del input
- * @property {string} placeholder - Texto placeholder del input
- * @property {string} [value] - Valor controlado del input
- * @property {Function} [onChange] - Callback que se ejecuta cuando cambia el valor del input
- * @property {boolean} [required] - Si el campo es requerido (default: false)
+ * @property {string} type - HTML input type (text, email, password, number, etc.)
+ * @property {string} id - Unique input ID to associate with the label
+ * @property {string} label - Label text displayed above the input
+ * @property {string} placeholder - Input placeholder text
+ * @property {string} [value] - Controlled input value
+ * @property {Function} [onChange] - Callback executed when input value changes
+ * @property {boolean} [required] - Whether the field is required (default: false)
  */
 interface InputProps {
   type: string;
@@ -22,20 +22,20 @@ interface InputProps {
 }
 
 /**
- * Componente de input reutilizable con label y estilos personalizados
- * Incluye estilos de borde azul con efecto focus
+ * Reusable input component with label and custom styles
+ * Includes blue border styles with focus effect
  * 
  * @component
- * @param {InputProps} props - Props del componente
- * @returns {JSX.Element} Input con label renderizado
+ * @param {InputProps} props - Component props
+ * @returns {JSX.Element} Rendered input with label
  * 
  * @example
  * ```tsx
  * <Input
  *   type="email"
  *   id="user-email"
- *   label="Correo Electrónico"
- *   placeholder="tu@email.com"
+ *   label="Email"
+ *   placeholder="your@email.com"
  *   value={email}
  *   onChange={(e) => setEmail(e.target.value)}
  *   required
@@ -63,7 +63,7 @@ const Input: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}
         required={required}
-        className="border-2 border-blue text-white bg-transparent rounded-sm h-10 p-2 focus:outline-none focus:border-lightblue"
+        className="border-2 border-white/75 text-white bg-transparent rounded-sm h-10 p-2 focus:outline-none focus:border-lightblue"
       />
     </div>
   );

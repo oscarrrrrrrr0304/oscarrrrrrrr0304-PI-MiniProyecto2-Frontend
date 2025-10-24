@@ -1,6 +1,6 @@
 /**
- * Página de perfil de usuario
- * Permite ver y editar información personal, cambiar contraseña y gestionar cuenta
+ * User profile page
+ * Allows viewing and editing personal information, changing password and managing account
  * 
  * @module ProfilePage
  */
@@ -16,28 +16,28 @@ import { pexelsService } from "../services/pexels.service";
 import type { PexelsVideo } from "../types/pexels.types";
 
 /**
- * Componente de la página de perfil de usuario
- * Gestiona la información personal y configuración de cuenta
+ * User profile page component
+ * Manages personal information and account settings
  * 
  * @component
- * @returns {JSX.Element} Página de perfil con modales
+ * @returns {JSX.Element} Profile page with modals
  * 
  * @description
- * Características principales:
- * - Vista de información del perfil (nombre, email, edad)
- * - Sección de "Me Gusta" recientes (últimos 4 videos)
- * - Modal de edición de perfil
- * - Cambio de contraseña con validación
- * - Confirmación de eliminación de cuenta
- * - Modal de confirmación de logout
- * - Validación de contraseña segura
- * - Manejo de estados de carga
+ * Main features:
+ * - Profile information view (name, email, age)
+ * - Recent "Likes" section (last 4 videos)
+ * - Profile edit modal
+ * - Password change with validation
+ * - Account deletion confirmation
+ * - Logout confirmation modal
+ * - Secure password validation
+ * - Loading states handling
  * 
- * Modales disponibles:
- * - Editar perfil (nombre, email, edad)
- * - Cambiar contraseña (con validaciones)
- * - Eliminar cuenta (requiere confirmación)
- * - Cerrar sesión (con confirmación)
+ * Available modals:
+ * - Edit profile (name, email, age)
+ * - Change password (with validations)
+ * - Delete account (requires confirmation)
+ * - Logout (with confirmation)
  * 
  * @example
  * ```tsx
@@ -52,38 +52,38 @@ const ProfilePage: React.FC = () => {
   const { user, updateUser, deleteAccount, logout, changePassword, isLoading } = useUserStore();
   const navigate = useNavigate();
 
-  // Estados para los modales
+  // Modal states
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
-  // Estados para los videos con "Me Gusta" recientes
+  // States for recent "Likes" videos
   const [recentLikedVideos, setRecentLikedVideos] = useState<PexelsVideo[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
 
-  // Estados para el formulario de edición
+  // States for edit form
   const [editData, setEditData] = useState({
     name: user?.name || "",
     email: user?.email || "",
     age: user?.age || 0,
-    bio: "", // Nueva descripción "sobre mi"
+    bio: "", // New "about me" description
   });
 
-  // Estados para cambio de contraseña
+  // States for password change
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
 
-  // Estados para el modal de eliminar cuenta
+  // States for delete account modal
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   /**
-   * Effect: Actualiza editData cuando el usuario cambia
-   * Sincroniza los datos del formulario con el usuario actual
+   * Effect: Updates editData when user changes
+   * Synchronizes form data with current user
    */
   useEffect(() => {
     if (user) {
@@ -91,31 +91,31 @@ const ProfilePage: React.FC = () => {
         name: user.name,
         email: user.email,
         age: user.age,
-        bio: "", // Reset bio cuando el usuario cambie
+        bio: "", // Reset bio when user changes
       });
     }
   }, [user]);
 
   /**
-   * Effect: Carga los 4 "Me Gusta" más recientes del usuario
-   * Se ejecuta cuando cambia el array moviesLiked
+   * Effect: Loads the 4 most recent "Likes" from user
+   * Runs when moviesLiked array changes
    */
   useEffect(() => {
     const loadRecentLikedVideos = async () => {
       try {
         setLoadingVideos(true);
 
-        // Verificar si el usuario tiene videos con "Me Gusta"
+        // Check if user has liked videos
         if (!user?.moviesLiked || user.moviesLiked.length === 0) {
           setRecentLikedVideos([]);
           setLoadingVideos(false);
           return;
         }
 
-        // Obtener los últimos 4 IDs (los más recientes están al final del array)
-        const recentIds = user.moviesLiked.slice(-4).reverse(); // Últimos 4 en orden inverso
+        // Get last 4 IDs (most recent are at the end of array)
+        const recentIds = user.moviesLiked.slice(-4).reverse(); // Last 4 in reverse order
 
-        // Cargar cada video por su ID
+        // Load each video by its ID
         const videoPromises = recentIds.map((videoId) =>
           pexelsService.getVideoById(videoId)
         );
@@ -123,7 +123,7 @@ const ProfilePage: React.FC = () => {
         const videos = await Promise.all(videoPromises);
         setRecentLikedVideos(videos);
       } catch (err) {
-        console.error("Error al cargar videos recientes con Me Gusta:", err);
+        console.error("Error loading recent liked videos:", err);
         setRecentLikedVideos([]);
       } finally {
         setLoadingVideos(false);
@@ -134,47 +134,47 @@ const ProfilePage: React.FC = () => {
   }, [user?.moviesLiked]);
 
   /**
-   * Maneja la actualización del perfil
+   * Handles profile update
    * 
    * @async
-   * @throws {Error} Si la actualización falla
+   * @throws {Error} If update fails
    */
   const handleUpdateProfile = async () => {
     try {
-      // Actualizar perfil
+      // Update profile
       await updateUser(editData);
       setShowEditModal(false);
-      alert("Perfil actualizado correctamente");
+      alert("Profile updated successfully");
     } catch (error) {
-      console.error("Error al actualizar perfil:", error);
-      alert("Error al actualizar el perfil. Por favor, intenta de nuevo.");
+      console.error("Error updating profile:", error);
+      alert("Error updating profile. Please try again.");
     }
   };
 
   /**
-   * Maneja el cambio de contraseña de forma independiente
+   * Handles password change independently
    * 
    * @async
-   * @throws {Error} Si el cambio de contraseña falla
+   * @throws {Error} If password change fails
    */
   const handleChangePassword = async () => {
     try {
-      // Validar que las contraseñas no estén vacías
+      // Validate that passwords are not empty
       if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmNewPassword) {
-        alert("Por favor, completa todos los campos de contraseña");
+        alert("Please fill all password fields");
         return;
       }
 
-      // Validar que las contraseñas coincidan
+      // Validate that passwords match
       if (passwordData.newPassword !== passwordData.confirmNewPassword) {
-        alert("Las contraseñas nuevas no coinciden");
+        alert("New passwords do not match");
         return;
       }
 
-      // Validar que la nueva contraseña cumpla los requisitos
+      // Validate that new password meets requirements
       const passwordValidation = validatePassword(passwordData.newPassword);
       if (!passwordValidation.isValid) {
-        alert(`La nueva contraseña no cumple los requisitos:\n${passwordValidation.errors.join("\n")}`);
+        alert(`New password doesn't meet requirements:\n${passwordValidation.errors.join("\n")}`);
         return;
       }
 
@@ -259,13 +259,13 @@ const ProfilePage: React.FC = () => {
           </div>
           <button
             onClick={() => setShowEditModal(true)}
-            className="edit-profile-button bg-green text-white py-3 rounded h-12 font-semibold hover:bg-green-600 transition"
+            className="edit-profile-button bg-blue text-white py-3 rounded h-12 font-semibold hover:bg-blue-medium transition"
           >
             Editar perfil
           </button>
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="logout-button bg-red text-white py-3 rounded h-12 font-semibold hover:bg-red-600 transition"
+            className="logout-button bg-red-dark text-white py-3 rounded h-12 font-semibold hover:bg-red-medium transition"
           >
             Cerrar sesion
           </button>
@@ -273,7 +273,7 @@ const ProfilePage: React.FC = () => {
         <p className="text-white cursor-pointer">
           ¿Deseas eliminar tu cuenta?
           <span
-            className="text-red font-semibold ml-1"
+            className="text-green font-semibold ml-1"
             onClick={() => setShowDeleteModal(true)}
           >
             Hazlo Aqui
@@ -372,7 +372,7 @@ const ProfilePage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowPasswordModal(true)}
-              className="text-white font-semibold hover:text-green transition"
+              className="text-green font-semibold"
             >
               ¿Deseas cambiar tu contraseña?
             </button>
@@ -384,7 +384,7 @@ const ProfilePage: React.FC = () => {
           <button
             onClick={handleUpdateProfile}
             disabled={isLoading}
-            className="flex-1 bg-green text-white py-3 rounded font-semibold hover:bg-green-600 transition disabled:opacity-50"
+            className="flex-1 bg-blue text-white py-3 rounded font-semibold hover:bg-blue-medium transition disabled:opacity-50"
           >
             {isLoading ? "Guardando..." : "Guardar"}
           </button>
@@ -459,7 +459,7 @@ const ProfilePage: React.FC = () => {
           <button
             onClick={handleChangePassword}
             disabled={isLoading}
-            className="flex-1 bg-green text-white py-3 rounded font-semibold hover:bg-green-600 transition disabled:opacity-50"
+            className="flex-1 bg-blue text-white py-3 rounded font-semibold hover:bg-blue-medium transition disabled:opacity-50"
           >
             {isLoading ? "Cambiando..." : "Cambiar contraseña"}
           </button>
@@ -550,7 +550,7 @@ const ProfilePage: React.FC = () => {
           <button
             onClick={handleDeleteAccount}
             disabled={isLoading || !canDelete}
-            className="flex-1 bg-red-600 text-white py-3 rounded font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-red-dark text-white py-3 rounded font-semibold hover:bg-red-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Eliminando..." : "Eliminar mi cuenta"}
           </button>
@@ -581,7 +581,7 @@ const ProfilePage: React.FC = () => {
             <button
               onClick={handleLogout}
               disabled={isLoading}
-              className="flex-1 bg-red text-white py-3 rounded font-semibold hover:bg-red-600 transition disabled:opacity-50"
+              className="flex-1 bg-red-dark text-white py-3 rounded font-semibold hover:bg-red-medium transition disabled:opacity-50"
             >
               {isLoading ? "Cerrando sesión..." : "Sí, cerrar sesión"}
             </button>

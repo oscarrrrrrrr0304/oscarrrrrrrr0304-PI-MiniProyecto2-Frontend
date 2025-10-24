@@ -2,22 +2,22 @@ import { useNavigate } from "react-router-dom";
 import type { PexelsVideo } from "../types/pexels.types";
 
 /**
- * Props para el componente VideoCard
+ * Props for the VideoCard component
  * @typedef {Object} VideoCardProps
- * @property {PexelsVideo} video - Objeto de video de Pexels con toda la información del video
+ * @property {PexelsVideo} video - Pexels video object with all video information
  */
 interface VideoCardProps {
   video: PexelsVideo;
 }
 
 /**
- * Componente que muestra una tarjeta de video con información básica
- * Incluye imagen de preview, autor, duración, y métricas de interacción
- * Al hacer click en la tarjeta, navega a la página de detalle del video
+ * Component that displays a video card with basic information
+ * Includes preview image, author, duration, and interaction metrics
+ * Clicking the card navigates to the video detail page
  * 
  * @component
- * @param {VideoCardProps} props - Props del componente
- * @returns {JSX.Element} Tarjeta de video renderizada
+ * @param {VideoCardProps} props - Component props
+ * @returns {JSX.Element} Rendered video card
  * 
  * @example
  * ```tsx
@@ -28,8 +28,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   const navigate = useNavigate();
 
   /**
-   * Maneja el evento de click en la tarjeta
-   * Navega a la página de detalle del video usando su ID
+   * Handles click event on the card
+   * Navigates to the video detail page using its ID
    */
   const handleClick = () => {
     navigate(`/video/${video._id}`);
@@ -76,7 +76,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-star stroke-yellow-500"
+              className="icon icon-tabler icons-tabler-outline icon-tabler-star stroke-yellow"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />

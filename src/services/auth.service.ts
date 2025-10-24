@@ -1,6 +1,6 @@
 /**
- * Servicio de autenticación para interactuar con el backend
- * Maneja login, registro, verificación de token, recuperación de contraseña y gestión de usuario
+ * Authentication service to interact with the backend
+ * Handles login, registration, token verification, password recovery and user management
  * 
  * @module authService
  */
@@ -17,24 +17,24 @@ import type {
 } from "../types/auth.types.js";
 
 /**
- * URL base del backend obtenida desde variables de entorno
+ * Backend base URL obtained from environment variables
  * @constant {string}
  */
 const API_URL = import.meta.env.VITE_API_URL;
 
 /**
- * Maneja las respuestas de las peticiones HTTP
- * Parsea errores del backend y lanza excepciones con mensajes descriptivos
+ * Handles HTTP request responses
+ * Parses backend errors and throws exceptions with descriptive messages
  * 
  * @async
- * @param {Response} response - Respuesta de fetch
- * @returns {Promise<any>} JSON parseado de la respuesta
- * @throws {Error} Si la respuesta no es exitosa (status code >= 400)
+ * @param {Response} response - Fetch response
+ * @returns {Promise<any>} Parsed JSON response
+ * @throws {Error} If response is not successful (status code >= 400)
  */
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
     const error = await response.json().catch(() => ({
-      message: "Error en la solicitud",
+      message: "Request error",
     }));
     throw new Error(error.message || error.error || `Error ${response.status}: ${response.statusText}`);
   }
@@ -42,10 +42,10 @@ const handleResponse = async (response: Response) => {
 };
 
 /**
- * Obtiene los headers de autenticación con el token JWT
- * Incluye el token desde localStorage si existe
+ * Gets authentication headers with JWT token
+ * Includes token from localStorage if it exists
  * 
- * @returns {Object} Headers con Content-Type y Authorization (si hay token)
+ * @returns {Object} Headers with Content-Type and Authorization (if token exists)
  */
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
@@ -56,16 +56,16 @@ const getAuthHeaders = () => {
 };
 
 /**
- * Servicio de autenticación y gestión de usuarios
+ * Authentication and user management service
  * @namespace authService
  */
 export const authService = {
   /**
-   * Inicia sesión con credenciales de usuario
+   * Logs in with user credentials
    * @async
-   * @param {LoginCredentials} credentials - Email y contraseña del usuario
-   * @returns {Promise<AuthResponse>} Usuario autenticado y token JWT
-   * @throws {Error} Si las credenciales son inválidas
+   * @param {LoginCredentials} credentials - User's email and password
+   * @returns {Promise<AuthResponse>} Authenticated user and JWT token
+   * @throws {Error} If credentials are invalid
    * @example
    * const { user, token } = await authService.login({ email: 'user@example.com', password: '123456' });
    */
@@ -80,11 +80,11 @@ export const authService = {
   },
 
   /**
-   * Registra un nuevo usuario en la aplicación
+   * Registers a new user in the application
    * @async
-   * @param {RegisterData} data - Datos del nuevo usuario (nombre, email, contraseña, edad)
-   * @returns {Promise<AuthResponse>} Usuario registrado y token JWT
-   * @throws {Error} Si el email ya está registrado o los datos son inválidos
+   * @param {RegisterData} data - New user data (name, email, password, age)
+   * @returns {Promise<AuthResponse>} Registered user and JWT token
+   * @throws {Error} If email is already registered or data is invalid
    * @example
    * const { user, token } = await authService.register({ name: 'Juan', email: 'juan@example.com', password: '123456', age: 25 });
    */
@@ -98,11 +98,11 @@ export const authService = {
   },
 
   /**
-   * Verifica la validez del token JWT almacenado
-   * Usado para auto-login al cargar la aplicación
+   * Verifies the validity of the stored JWT token
+   * Used for auto-login when loading the application
    * @async
-   * @returns {Promise<User>} Datos del usuario si el token es válido
-   * @throws {Error} Si el token es inválido o ha expirado
+   * @returns {Promise<User>} User data if token is valid
+   * @throws {Error} If token is invalid or expired
    * @example
    * const user = await authService.verifyToken();
    */
@@ -116,11 +116,11 @@ export const authService = {
   },
 
   /**
-   * Solicita un correo de recuperación de contraseña
+   * Requests a password recovery email
    * @async
-   * @param {ForgotPasswordData} data - Email del usuario
-   * @returns {Promise<{message: string}>} Mensaje de confirmación
-   * @throws {Error} Si el email no está registrado
+   * @param {ForgotPasswordData} data - User's email
+   * @returns {Promise<{message: string}>} Confirmation message
+   * @throws {Error} If email is not registered
    * @example
    * await authService.forgotPassword({ email: 'user@example.com' });
    */
@@ -134,11 +134,11 @@ export const authService = {
   },
 
   /**
-   * Resetea la contraseña usando el token recibido por email
+   * Resets password using the token received by email
    * @async
-   * @param {ResetPasswordData} data - Token de reseteo y nueva contraseña
-   * @returns {Promise<{message: string}>} Mensaje de confirmación
-   * @throws {Error} Si el token es inválido o ha expirado
+   * @param {ResetPasswordData} data - Reset token and new password
+   * @returns {Promise<{message: string}>} Confirmation message
+   * @throws {Error} If token is invalid or expired
    * @example
    * await authService.resetPassword({ token: 'reset-token-123', newPassword: 'newpass123' });
    */
@@ -152,12 +152,12 @@ export const authService = {
   },
 
   /**
-   * Actualiza los datos del perfil de usuario
+   * Updates user profile data
    * @async
-   * @param {string} userId - ID del usuario a actualizar
-   * @param {UpdateUserData} data - Datos a actualizar (nombre, email, edad)
-   * @returns {Promise<User>} Usuario actualizado
-   * @throws {Error} Si el usuario no existe o los datos son inválidos
+   * @param {string} userId - ID of user to update
+   * @param {UpdateUserData} data - Data to update (name, email, age)
+   * @returns {Promise<User>} Updated user
+   * @throws {Error} If user doesn't exist or data is invalid
    * @example
    * const updatedUser = await authService.updateUser('user-id-123', { name: 'Juan Carlos' });
    */
@@ -171,13 +171,13 @@ export const authService = {
   },
 
   /**
-   * Cambia la contraseña del usuario
-   * Requiere la contraseña actual para validar la acción
+   * Changes user password
+   * Requires current password to validate action
    * @async
-   * @param {string} userId - ID del usuario
-   * @param {ChangePasswordData} data - Contraseña actual y nueva contraseña
-   * @returns {Promise<{message: string}>} Mensaje de confirmación
-   * @throws {Error} Si la contraseña actual es incorrecta
+   * @param {string} userId - User ID
+   * @param {ChangePasswordData} data - Current password and new password
+   * @returns {Promise<{message: string}>} Confirmation message
+   * @throws {Error} If current password is incorrect
    * @example
    * await authService.changePassword('user-id-123', { currentPassword: 'old123', newPassword: 'new456' });
    */
@@ -191,11 +191,11 @@ export const authService = {
   },
 
   /**
-   * Elimina permanentemente la cuenta del usuario
+   * Permanently deletes user account
    * @async
-   * @param {User} data - Datos del usuario a eliminar
-   * @returns {Promise<User>} Usuario eliminado
-   * @throws {Error} Si el usuario no existe
+   * @param {User} data - User data to delete
+   * @returns {Promise<User>} Deleted user
+   * @throws {Error} If user doesn't exist
    * @example
    * await authService.deleteAccount(currentUser);
    */
@@ -208,9 +208,9 @@ export const authService = {
   },
 
   /**
-   * Cierra la sesión del usuario
-   * Intenta invalidar el token en el backend (si está implementado)
-   * No lanza error si falla, ya que el token local se limpia de todas formas
+   * Logs out the user
+   * Attempts to invalidate token on backend (if implemented)
+   * Doesn't throw error if it fails, as local token is cleared anyway
    * @async
    * @returns {Promise<void>}
    * @example
@@ -223,8 +223,8 @@ export const authService = {
         headers: getAuthHeaders(),
       });
     } catch (error) {
-      // Incluso si falla, limpiamos el token local
-      console.error("Error en logout:", error);
+      // Even if it fails, we clear the local token
+      console.error("Logout error:", error);
     }
   },
 };

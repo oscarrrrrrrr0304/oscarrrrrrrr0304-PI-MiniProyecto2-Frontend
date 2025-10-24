@@ -6,12 +6,12 @@ import type { PexelsVideo } from "../types/pexels.types";
 import { pexelsService } from "../services/pexels.service";
 
 /**
- * Props para el componente VideosCarousel
+ * Props for the VideosCarousel component
  * @typedef {Object} VideosCarouselProps
- * @property {string} title - Título del carrusel que se muestra en el TitleBanner
- * @property {string} [category] - Categoría de videos a buscar (ej: 'entertainment', 'travel')
- * @property {boolean} [isPopular] - Si es true, carga videos populares en lugar de buscar por categoría
- * @property {number} [perPage] - Cantidad de videos a cargar por página (default: 12)
+ * @property {string} title - Carousel title displayed in the TitleBanner
+ * @property {string} [category] - Video category to search (e.g., 'entertainment', 'travel')
+ * @property {boolean} [isPopular] - If true, loads popular videos instead of searching by category
+ * @property {number} [perPage] - Number of videos to load per page (default: 12)
  */
 interface VideosCarouselProps {
   title: string;
@@ -21,18 +21,18 @@ interface VideosCarouselProps {
 }
 
 /**
- * Componente de carrusel horizontal de videos
- * Muestra una lista de videos en formato carrusel con scroll horizontal
- * Incluye un banner de título con botón "Ver más" que navega a la página de búsqueda
+ * Horizontal video carousel component
+ * Displays a list of videos in carousel format with horizontal scroll
+ * Includes a title banner with "See more" button that navigates to search page
  * 
  * @component
- * @param {VideosCarouselProps} props - Props del componente
- * @returns {JSX.Element} Carrusel de videos renderizado
+ * @param {VideosCarouselProps} props - Component props
+ * @returns {JSX.Element} Rendered video carousel
  * 
  * @example
  * ```tsx
  * <VideosCarousel
- *   title="Videos Populares"
+ *   title="Popular Videos"
  *   isPopular={true}
  * />
  * ```
@@ -40,7 +40,7 @@ interface VideosCarouselProps {
  * @example
  * ```tsx
  * <VideosCarousel
- *   title="Entretenimiento"
+ *   title="Entertainment"
  *   category="entertainment"
  *   perPage={15}
  * />
@@ -58,11 +58,11 @@ const VideosCarousel: React.FC<VideosCarouselProps> = ({
   const navigate = useNavigate();
 
   /**
-   * Maneja el click en el botón "Ver más"
-   * Navega a la página de búsqueda con la categoría correspondiente
+   * Handles click on the "See more" button
+   * Navigates to the search page with the corresponding category
    */
   const handleViewMore = () => {
-    // Redirigir a SearchPage con la categoría
+    // Redirect to SearchPage with the category
     if (category) {
       navigate(`/search?category=${encodeURIComponent(category)}`);
     } else if (isPopular) {
@@ -71,10 +71,10 @@ const VideosCarousel: React.FC<VideosCarouselProps> = ({
   };
 
   /**
-   * Carga los videos desde la API de Pexels
-   * Usa getPopularVideos si isPopular es true, o searchVideos con la categoría
+   * Loads videos from Pexels API
+   * Uses getPopularVideos if isPopular is true, or searchVideos with the category
    * @async
-   * @throws {Error} Si hay un error al cargar los videos
+   * @throws {Error} If there's an error loading videos
    */
   const loadVideos = async () => {
     try {
@@ -87,13 +87,13 @@ const VideosCarousel: React.FC<VideosCarouselProps> = ({
       } else if (category) {
         response = await pexelsService.searchVideos(category, 1, perPage);
       } else {
-        throw new Error("Se requiere una categoría o marcar como popular");
+        throw new Error("A category is required or mark as popular");
       }
 
       setVideos(response.videos);
     } catch (err) {
-      console.error(`Error al cargar videos de ${title}:`, err);
-      setError("Error al cargar videos");
+      console.error(`Error loading videos from ${title}:`, err);
+      setError("Error loading videos");
     } finally {
       setLoading(false);
     }

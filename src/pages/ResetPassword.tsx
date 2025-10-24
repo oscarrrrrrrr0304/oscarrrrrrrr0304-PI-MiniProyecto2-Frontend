@@ -1,6 +1,6 @@
 /**
- * Página de reseteo de contraseña con token
- * Permite establecer una nueva contraseña usando el token recibido por email
+ * Password reset page with token
+ * Allows setting a new password using the token received by email
  * 
  * @module ResetPassword
  */
@@ -12,34 +12,34 @@ import useUserStore from "../stores/useUserStore";
 import { validatePassword } from "../utils/validators";
 
 /**
- * Componente de la página de reseteo de contraseña
- * Usa el token de URL para validar y permitir cambio de contraseña
+ * Password reset page component
+ * Uses URL token to validate and allow password change
  * 
  * @component
- * @returns {JSX.Element} Página de reseteo de contraseña
+ * @returns {JSX.Element} Password reset page
  * 
  * @description
- * Características:
- * - Extrae token de URL params (/reset-password/:token)
- * - Formulario con nueva contraseña y confirmación
- * - Validación de contraseña segura
- * - Mostrar/ocultar contraseña
- * - Video de fondo rotativo
- * - Mensaje de éxito con redirección al login
- * - Manejo de errores (token inválido/expirado)
+ * Features:
+ * - Extracts token from URL params (/reset-password/:token)
+ * - Form with new password and confirmation
+ * - Secure password validation
+ * - Show/hide password
+ * - Rotating background video
+ * - Success message with redirect to login
+ * - Error handling (invalid/expired token)
  * - Loading state
  * 
- * Requisitos de contraseña:
- * - Mínimo 8 caracteres
- * - Al menos una letra mayúscula
- * - Al menos un número
- * - Al menos un carácter especial
+ * Password requirements:
+ * - Minimum 8 characters
+ * - At least one uppercase letter
+ * - At least one number
+ * - At least one special character
  * 
- * Flujo:
- * 1. Usuario llega con token en URL
- * 2. Ingresa nueva contraseña y confirma
- * 3. Sistema valida token y actualiza contraseña
- * 4. Redirección automática al login después de 3 segundos
+ * Flow:
+ * 1. User arrives with token in URL
+ * 2. Enters new password and confirms
+ * 3. System validates token and updates password
+ * 4. Automatic redirect to login after 3 seconds
  * 
  * @example
  * ```tsx
@@ -53,7 +53,7 @@ const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   
   /**
-   * Array de rutas de videos para el fondo
+   * Array of video paths for the background
    * @constant {string[]}
    */
   const videos = [
@@ -65,7 +65,7 @@ const ResetPassword: React.FC = () => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Estados del formulario
+  // Form states
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -75,8 +75,8 @@ const ResetPassword: React.FC = () => {
   const { resetPassword, isLoading, error, clearError } = useUserStore();
 
   /**
-   * Maneja el evento de finalización del video
-   * Cambia al siguiente video en el array de forma circular
+   * Handles the video end event
+   * Changes to the next video in the array in a circular manner
    */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
@@ -84,11 +84,11 @@ const ResetPassword: React.FC = () => {
   };
 
   /**
-   * Maneja el envío del formulario de reseteo
-   * Valida contraseñas y actualiza con el token
+   * Handles the reset form submission
+   * Validates passwords and updates with token
    * 
    * @async
-   * @param {FormEvent} e - Evento del formulario
+   * @param {FormEvent} e - Form event
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -186,14 +186,14 @@ const ResetPassword: React.FC = () => {
 
             <button
               type="submit"
-              className="bg-green text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-medium text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? "Actualizando..." : "Restablecer Contraseña"}
             </button>
           </form>
         </div>
-        <Link to="/login" className="text-lightblue font-semibold">
+        <Link to="/login" className="text-green font-semibold">
           Volver al inicio de sesión
         </Link>
       </div>

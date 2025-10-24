@@ -2,22 +2,22 @@ import type { ReactNode } from "react";
 import Navbar from "./Navbar";
 
 /**
- * Props para el componente Layout
+ * Props for the Layout component
  * @typedef {Object} LayoutProps
- * @property {ReactNode} children - Contenido de la página que se renderiza dentro del layout
+ * @property {ReactNode} children - Page content rendered inside the layout
  */
 interface LayoutProps {
   children: ReactNode;
 }
 
 /**
- * Componente de layout principal de la aplicación
- * Incluye la barra de navegación (Navbar) y el contenido de la página
- * Se usa como wrapper para todas las rutas protegidas
+ * Main application layout component
+ * Includes the navigation bar (Navbar) and page content
+ * Used as a wrapper for all protected routes
  * 
  * @component
- * @param {LayoutProps} props - Props del componente
- * @returns {JSX.Element} Layout con navbar y contenido
+ * @param {LayoutProps} props - Component props
+ * @returns {JSX.Element} Layout with navbar and content
  * 
  * @example
  * ```tsx
@@ -27,8 +27,8 @@ interface LayoutProps {
  * ```
  * 
  * @description
- * Este componente proporciona la estructura básica de navegación
- * para todas las páginas de la aplicación autenticada
+ * This component provides the basic navigation structure
+ * for all pages of the authenticated application
  */
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (

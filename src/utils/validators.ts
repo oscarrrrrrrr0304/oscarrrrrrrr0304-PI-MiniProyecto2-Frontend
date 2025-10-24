@@ -1,10 +1,10 @@
 /**
- * @fileoverview Utilidades de validación para formularios
+ * @fileoverview Form validation utilities
  * @module utils/validators
  */
 
 /**
- * Interfaz para el resultado de validación de contraseña
+ * Interface for password validation result
  */
 export interface PasswordValidationResult {
   isValid: boolean;
@@ -12,42 +12,42 @@ export interface PasswordValidationResult {
 }
 
 /**
- * Valida que una contraseña cumpla con los requisitos de seguridad:
- * - Mínimo 8 caracteres
- * - Al menos una letra mayúscula
- * - Al menos un número
- * - Al menos un carácter especial
+ * Validates that a password meets security requirements:
+ * - Minimum 8 characters
+ * - At least one uppercase letter
+ * - At least one number
+ * - At least one special character
  * 
- * @param password - La contraseña a validar
- * @returns Objeto con isValid (boolean) y array de errores
+ * @param password - The password to validate
+ * @returns Object with isValid (boolean) and errors array
  * 
  * @example
- * const result = validatePassword("MiPass123!");
+ * const result = validatePassword("MyPass123!");
  * if (!result.isValid) {
- *   console.log(result.errors); // Array de mensajes de error
+ *   console.log(result.errors); // Array of error messages
  * }
  */
 export const validatePassword = (password: string): PasswordValidationResult => {
   const errors: string[] = [];
 
-  // Mínimo 8 caracteres
+  // Minimum 8 characters
   if (password.length < 8) {
-    errors.push("La contraseña debe tener al menos 8 caracteres");
+    errors.push("Password must be at least 8 characters long");
   }
 
-  // Al menos una letra mayúscula
+  // At least one uppercase letter
   if (!/[A-Z]/.test(password)) {
-    errors.push("La contraseña debe contener al menos una letra mayúscula");
+    errors.push("Password must contain at least one uppercase letter");
   }
 
-  // Al menos un número
+  // At least one number
   if (!/[0-9]/.test(password)) {
-    errors.push("La contraseña debe contener al menos un número");
+    errors.push("Password must contain at least one number");
   }
 
-  // Al menos un carácter especial
+  // At least one special character
   if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
-    errors.push("La contraseña debe contener al menos un carácter especial (!@#$%^&*()_+-=[]{}...)");
+    errors.push("Password must contain at least one special character (!@#$%^&*()_+-=[]{}...)");
   }
 
   return {
@@ -57,10 +57,10 @@ export const validatePassword = (password: string): PasswordValidationResult => 
 };
 
 /**
- * Obtiene un mensaje de ayuda con los requisitos de contraseña
+ * Gets a help message with password requirements
  * 
- * @returns String con los requisitos de contraseña
+ * @returns String with password requirements
  */
 export const getPasswordRequirements = (): string => {
-  return "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, un número y un carácter especial";
+  return "Password must be at least 8 characters long, include an uppercase letter, a number, and a special character";
 };

@@ -1,6 +1,6 @@
 /**
- * Componente principal de la aplicación
- * Configura el enrutamiento de React Router con rutas públicas y protegidas
+ * Main application component
+ * Configures React Router routing with public and protected routes
  * 
  * @module App
  */
@@ -23,33 +23,33 @@ import SiteMapPage from "./pages/SiteMapPage";
 import VideoPage from "./pages/VideoPage";
 
 /**
- * Componente raíz de la aplicación
- * Define la estructura de rutas y la navegación de la aplicación
+ * Root application component
+ * Defines the route structure and navigation of the application
  * 
  * @component
- * @returns {JSX.Element} Aplicación con enrutamiento configurado
+ * @returns {JSX.Element} Application with configured routing
  * 
  * @description
- * Rutas públicas (no requieren autenticación):
- * - /login - Página de inicio de sesión
- * - /register - Página de registro
- * - /forgot-password - Solicitar recuperación de contraseña
- * - /reset-password/:token - Resetear contraseña con token
+ * Public routes (do not require authentication):
+ * - /login - Login page
+ * - /register - Registration page
+ * - /forgot-password - Request password recovery
+ * - /reset-password/:token - Reset password with token
  * 
- * Rutas protegidas (requieren autenticación):
- * - /home - Página principal con carruseles de videos
- * - /video/:videoId - Página de detalle de video con reproductor
- * - /profile - Perfil de usuario
- * - /search - Búsqueda y filtrado de videos
- * - /liked - Videos marcados como favoritos
- * - /about - Acerca de nosotros
- * - /sitemap - Mapa del sitio
+ * Protected routes (require authentication):
+ * - /home - Main page with video carousels
+ * - /video/:videoId - Video detail page with player
+ * - /profile - User profile
+ * - /search - Video search and filtering
+ * - /liked - Liked videos
+ * - /about - About us
+ * - /sitemap - Site map
  * 
- * La ruta raíz (/) redirige automáticamente a /login
+ * The root route (/) automatically redirects to /login
  * 
  * @example
  * ```tsx
- * // Uso en main.tsx
+ * // Usage in main.tsx
  * ReactDOM.createRoot(document.getElementById("root")!).render(
  *   <React.StrictMode>
  *     <App />
@@ -58,16 +58,16 @@ import VideoPage from "./pages/VideoPage";
  * ```
  */
 const App: React.FC = () => {
-  // Zustand con persist maneja automáticamente la restauración del estado desde localStorage
+  // Zustand with persist automatically handles state restoration from localStorage
   
   return (
     <BrowserRouter>
       <main className="bg-darkblue min-w-full min-h-screen">
         <Routes>
-          {/* Ruta raíz redirige al login */}
+          {/* Root route redirects to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Rutas públicas */}
+          {/* Public routes */}
           <Route 
             path="/login" 
             element={
@@ -101,7 +101,7 @@ const App: React.FC = () => {
             } 
           />
 
-          {/* Rutas protegidas */}
+          {/* Protected routes */}
           <Route
             path="/home"
             element={

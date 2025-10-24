@@ -1,25 +1,25 @@
 import { Link, useNavigate, useLocation } from "react-router";
 
 /**
- * Componente de barra de navegación responsive
- * En móvil: barra superior con logo y botón volver + barra inferior con navegación
- * En desktop/tablet: barra única superior con logo centrado y navegación a la derecha
- * 
+ * Responsive navigation bar component
+ * Mobile: top bar with logo and back button + bottom bar with navigation
+ * Desktop/Tablet: single top bar with centered logo and navigation on the right
+ *
  * @component
- * @returns {JSX.Element} Barra de navegación adaptativa
- * 
+ * @returns {JSX.Element} Adaptive navigation bar
+ *
  * @example
  * ```tsx
  * <Navbar />
  * ```
- * 
+ *
  * @description
- * Características:
- * - Navegación responsive (móvil y desktop)
- * - Botón "Volver" que aparece en todas las páginas excepto Home
- * - Enlaces a: Home, Search, Liked, Profile
- * - Logo centrado
- * - Posicionamiento fijo (top en desktop, top + bottom en móvil)
+ * Features:
+ * - Responsive navigation (mobile and desktop)
+ * - "Back" button that appears on all pages except Home
+ * - Links to: Home, Search, Liked, Profile
+ * - Centered logo
+ * - Fixed positioning (top on desktop, top + bottom on mobile)
  */
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
   const isHomePage = location.pathname === "/home";
 
   /**
-   * Navega a la página anterior en el historial del navegador
+   * Navigates to the previous page in browser history
    */
   const handleGoBack = () => {
     navigate(-1);
@@ -50,17 +50,23 @@ const Navbar: React.FC = () => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-big-left"
+              className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M20 15h-8v3.586a1 1 0 0 1 -1.707 .707l-6.586 -6.586a1 1 0 0 1 0 -1.414l6.586 -6.586a1 1 0 0 1 1.707 .707v3.586h8a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1z" />
+              <path d="M5 12l14 0" />
+              <path d="M5 12l4 4" />
+              <path d="M5 12l4 -4" />
             </svg>
             <p>Volver</p>
           </button>
         ) : (
           <div className="w-20"></div>
         )}
-        <img src="./images/logo.png" alt="logo.png" className="w-16 h-16 object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+        <img
+          src="./images/logo.png"
+          alt="logo.png"
+          className="w-16 h-16 object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        />
         <div className="w-16"></div>
       </nav>
       <nav className="md:hidden w-full fixed bottom-0 left-0 h-20 bg-darkblue border-t z-[1000]">
@@ -168,17 +174,23 @@ const Navbar: React.FC = () => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-big-left"
+              className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M20 15h-8v3.586a1 1 0 0 1 -1.707 .707l-6.586 -6.586a1 1 0 0 1 0 -1.414l6.586 -6.586a1 1 0 0 1 1.707 .707v3.586h8a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1z" />
+              <path d="M5 12l14 0" />
+              <path d="M5 12l4 4" />
+              <path d="M5 12l4 -4" />
             </svg>
             <p>Volver</p>
           </button>
         ) : (
           <div className="w-24"></div>
         )}
-        <img src="./images/logo.png" alt="logo.png" className="w-16 h-16 object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+        <img
+          src="./images/logo.png"
+          alt="logo.png"
+          className="w-16 h-16 object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        />
         <div className="nav-options flex">
           <Link
             to="/home"

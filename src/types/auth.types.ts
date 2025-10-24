@@ -1,30 +1,30 @@
 ﻿/**
- * Tipos de TypeScript para autenticación y gestión de usuarios
+ * TypeScript types for authentication and user management
  * @module auth.types
  */
 
 /**
- * Usuario de la aplicación
+ * Application user
  * @interface User
- * @property {string} id - ID único del usuario
- * @property {string} name - Nombre completo del usuario
- * @property {string} email - Email del usuario (usado para login)
- * @property {number} age - Edad del usuario
- * @property {string[]} moviesLiked - Array de IDs de videos que le gustan al usuario
+ * @property {string} id - Unique user ID
+ * @property {string} name - User's full name
+ * @property {string} email - User's email (used for login)
+ * @property {number} age - User's age
+ * @property {string[]} moviesLiked - Array of video IDs that the user likes
  */
 export interface User {
   id: string;
   name: string;
   email: string;
   age: number;
-  moviesLiked?: string[]; // Opcional para retrocompatibilidad
+  moviesLiked?: string[]; // Optional for backward compatibility
 }
 
 /**
- * Respuesta del servidor para operaciones de autenticación (login/register)
+ * Server response for authentication operations (login/register)
  * @interface AuthResponse
- * @property {User} user - Datos del usuario autenticado
- * @property {string} token - Token JWT para autenticación en peticiones futuras
+ * @property {User} user - Authenticated user data
+ * @property {string} token - JWT token for authentication in future requests
  */
 export interface AuthResponse {
   user: User;
@@ -32,10 +32,10 @@ export interface AuthResponse {
 }
 
 /**
- * Credenciales para iniciar sesión
+ * Credentials for login
  * @interface LoginCredentials
- * @property {string} email - Email del usuario
- * @property {string} password - Contraseña del usuario
+ * @property {string} email - User's email
+ * @property {string} password - User's password
  */
 export interface LoginCredentials {
   email: string;
@@ -43,12 +43,12 @@ export interface LoginCredentials {
 }
 
 /**
- * Datos necesarios para registrar un nuevo usuario
+ * Required data to register a new user
  * @interface RegisterData
- * @property {string} name - Nombre completo
- * @property {string} email - Email único
- * @property {string} password - Contraseña (mínimo 6 caracteres recomendado)
- * @property {number} age - Edad del usuario
+ * @property {string} name - Full name
+ * @property {string} email - Unique email
+ * @property {string} password - Password (minimum 6 characters recommended)
+ * @property {number} age - User's age
  */
 export interface RegisterData {
   name: string;
@@ -58,12 +58,12 @@ export interface RegisterData {
 }
 
 /**
- * Datos opcionales para actualizar el perfil de usuario
- * Todos los campos son opcionales, solo se actualizan los proporcionados
+ * Optional data to update user profile
+ * All fields are optional, only provided ones will be updated
  * @interface UpdateUserData
- * @property {string} [name] - Nuevo nombre
- * @property {string} [email] - Nuevo email
- * @property {number} [age] - Nueva edad
+ * @property {string} [name] - New name
+ * @property {string} [email] - New email
+ * @property {number} [age] - New age
  */
 export interface UpdateUserData {
   name?: string;
@@ -72,10 +72,10 @@ export interface UpdateUserData {
 }
 
 /**
- * Datos para cambiar la contraseña del usuario
+ * Data to change user password
  * @interface ChangePasswordData
- * @property {string} currentPassword - Contraseña actual para validar
- * @property {string} newPassword - Nueva contraseña
+ * @property {string} currentPassword - Current password to validate
+ * @property {string} newPassword - New password
  */
 export interface ChangePasswordData {
   currentPassword: string;
@@ -83,19 +83,19 @@ export interface ChangePasswordData {
 }
 
 /**
- * Datos para solicitar recuperación de contraseña
+ * Data to request password recovery
  * @interface ForgotPasswordData
- * @property {string} email - Email del usuario que olvidó su contraseña
+ * @property {string} email - Email of the user who forgot their password
  */
 export interface ForgotPasswordData {
   email: string;
 }
 
 /**
- * Datos para resetear la contraseña con un token
+ * Data to reset password with a token
  * @interface ResetPasswordData
- * @property {string} token - Token recibido por email
- * @property {string} newPassword - Nueva contraseña a establecer
+ * @property {string} token - Token received by email
+ * @property {string} newPassword - New password to set
  */
 export interface ResetPasswordData {
   token: string;

@@ -1,9 +1,9 @@
 /**
- * Props para el componente Member
+ * Props for the Member component
  * @typedef {Object} MemberProps
- * @property {string} name - Nombre completo del miembro del equipo
- * @property {string} role - Rol o puesto en el equipo
- * @property {string} image - Ruta a la imagen de perfil
+ * @property {string} name - Team member's full name
+ * @property {string} role - Role or position in the team
+ * @property {string} image - Path to profile image
  */
 interface MemberProps {
   name: string;
@@ -12,26 +12,26 @@ interface MemberProps {
 }
 
 /**
- * Componente de tarjeta de miembro del equipo
- * Muestra foto, nombre y rol con efecto grayscale hover
+ * Team member card component
+ * Displays photo, name, and role with grayscale hover effect
  * 
  * @component
- * @param {MemberProps} props - Props del componente
- * @returns {JSX.Element} Tarjeta de miembro renderizada
+ * @param {MemberProps} props - Component props
+ * @returns {JSX.Element} Rendered member card
  * 
  * @description
- * Características:
- * - Imagen de fondo con background-image
- * - Efecto grayscale por defecto
- * - Hover remueve grayscale y añade transición suave
- * - Responsive con ancho adaptativo
- * - Texto centrado con jerarquía visual
+ * Features:
+ * - Background image with background-image
+ * - Default grayscale effect
+ * - Hover removes grayscale and adds smooth transition
+ * - Responsive with adaptive width
+ * - Centered text with visual hierarchy
  * 
  * @example
  * ```tsx
  * <Member
  *   name="Jean Pierre Cardenas"
- *   role="Desarrollador Frontend"
+ *   role="Frontend Developer"
  *   image="./images/team/jean.jpg"
  * />
  * ```

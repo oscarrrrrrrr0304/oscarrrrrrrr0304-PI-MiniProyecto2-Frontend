@@ -1,6 +1,6 @@
 /**
- * Página de registro de nuevos usuarios
- * Permite crear una cuenta nueva en la aplicación
+ * New user registration page
+ * Allows creating a new account in the application
  * 
  * @module RegisterPage
  */
@@ -12,28 +12,28 @@ import useUserStore from "../stores/useUserStore";
 import { validatePassword } from "../utils/validators";
 
 /**
- * Componente de la página de registro
- * Incluye formulario completo con validaciones de contraseña segura
+ * Registration page component
+ * Includes complete form with secure password validations
  * 
  * @component
- * @returns {JSX.Element} Página de registro
+ * @returns {JSX.Element} Registration page
  * 
  * @description
- * Características:
- * - Formulario con nombre, edad, email, contraseña y confirmación
- * - Validación de contraseñas coincidentes
- * - Validación de contraseña segura (mayúsculas, números, caracteres especiales)
- * - Video de fondo rotativo (4 videos)
- * - Manejo de errores con mensajes visuales
- * - Loading state durante el registro
- * - Mensaje de requisitos de contraseña
+ * Features:
+ * - Form with name, age, email, password and confirmation
+ * - Matching password validation
+ * - Secure password validation (uppercase, numbers, special characters)
+ * - Rotating background video (4 videos)
+ * - Error handling with visual messages
+ * - Loading state during registration
+ * - Password requirements message
  * - Responsive design
  * 
- * Requisitos de contraseña:
- * - Mínimo 8 caracteres
- * - Al menos una letra mayúscula
- * - Al menos un número
- * - Al menos un carácter especial
+ * Password requirements:
+ * - Minimum 8 characters
+ * - At least one uppercase letter
+ * - At least one number
+ * - At least one special character
  * 
  * @example
  * ```tsx
@@ -44,7 +44,7 @@ import { validatePassword } from "../utils/validators";
  */
 const RegisterPage: React.FC = () => {
   /**
-   * Array de rutas de videos para el fondo
+   * Array of video paths for the background
    * @constant {string[]}
    */
   const videos = [
@@ -56,7 +56,7 @@ const RegisterPage: React.FC = () => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Estados del formulario
+  // Form states
   const [username, setUsername] = useState("");
   const [age, setAge] = useState("");
   const [email, setEmail] = useState("");
@@ -69,8 +69,8 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
   /**
-   * Maneja el evento de finalización del video
-   * Cambia al siguiente video en el array de forma circular
+   * Handles the video end event
+   * Changes to the next video in the array in a circular manner
    */
   const handleVideoEnd = () => {
     const nextIndex = (currentVideoIndex + 1) % videos.length;
@@ -78,24 +78,24 @@ const RegisterPage: React.FC = () => {
   };
 
   /**
-   * Maneja el envío del formulario de registro
-   * Valida contraseñas y crea nueva cuenta
+   * Handles the registration form submission
+   * Validates passwords and creates new account
    * 
    * @async
-   * @param {FormEvent} e - Evento del formulario
+   * @param {FormEvent} e - Form event
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();
     setValidationError("");
 
-    // Validaciones
+    // Validations
     if (password !== confirmPassword) {
-      setValidationError("Las contraseñas no coinciden");
+      setValidationError("Passwords do not match");
       return;
     }
 
-    // Validar requisitos de contraseña segura
+    // Validate secure password requirements
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {
       setValidationError(passwordValidation.errors.join(". "));
@@ -192,7 +192,7 @@ const RegisterPage: React.FC = () => {
             />
             <button
               type="submit"
-              className="bg-green text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-medium text-white py-3 rounded h-12 font-semibold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? "Registrando..." : "Registrarse"}
@@ -201,7 +201,7 @@ const RegisterPage: React.FC = () => {
         </div>
         <p>
           ¿Ya tienes una cuenta?{" "}
-          <Link to="/login" className="text-lightblue font-semibold">
+          <Link to="/login" className="text-green font-semibold">
             Inicia sesión
           </Link>
         </p>

@@ -1,10 +1,10 @@
 /**
- * Tipos de TypeScript para la API de Pexels
- * Basado en la documentación: https://www.pexels.com/api/documentation/?language=javascript#videos
+ * TypeScript types for Pexels API
+ * Based on documentation: https://www.pexels.com/api/documentation/?language=javascript#videos
  */
 
 /**
- * Información del usuario que subió el video
+ * Information about the user who uploaded the video
  */
 export interface PexelsUser {
   _id: string;
@@ -13,7 +13,7 @@ export interface PexelsUser {
 }
 
 /**
- * Archivo de video en diferentes calidades
+ * Video file in different qualities
  */
 export interface VideoFile {
   _id: string;
@@ -25,7 +25,7 @@ export interface VideoFile {
 }
 
 /**
- * Imágenes de preview del video
+ * Video preview images
  */
 export interface VideoPicture {
   _id: string;
@@ -34,27 +34,27 @@ export interface VideoPicture {
 }
 
 /**
- * Estructura completa de un video de Pexels
+ * Complete structure of a Pexels video
  */
 export interface PexelsVideo {
   _id: string;
-  pexelsId?: number; // ID original de Pexels
+  pexelsId?: number; // Original Pexels ID
   width: number;
   height: number;
   url: string;
   image: string;
   duration: number;
   user: PexelsUser;
-  video_files?: VideoFile[]; // Opcional porque el backend podría no enviarlo
-  video_pictures?: VideoPicture[]; // Opcional porque el backend podría no enviarlo
-  likesCount?: number; // Contador de likes del backend
-  createdAt?: string; // Fecha de creación en el backend
-  updatedAt?: string; // Fecha de actualización en el backend
-  __v?: number; // Versión de MongoDB
+  video_files?: VideoFile[]; // Optional because backend might not send it
+  video_pictures?: VideoPicture[]; // Optional because backend might not send it
+  likesCount?: number; // Backend likes counter
+  createdAt?: string; // Creation date in backend
+  updatedAt?: string; // Update date in backend
+  __v?: number; // MongoDB version
 }
 
 /**
- * Respuesta de búsqueda de videos
+ * Video search response
  */
 export interface PexelsVideoSearchResponse {
   page: number;
@@ -65,7 +65,7 @@ export interface PexelsVideoSearchResponse {
 }
 
 /**
- * Respuesta de videos populares
+ * Popular videos response
  */
 export interface PexelsPopularVideosResponse {
   page: number;

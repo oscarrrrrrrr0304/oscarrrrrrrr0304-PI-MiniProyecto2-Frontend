@@ -7,7 +7,7 @@
  * Información del usuario que subió el video
  */
 export interface PexelsUser {
-  id: number;
+  _id: string;
   name: string;
   url: string;
 }
@@ -16,7 +16,7 @@ export interface PexelsUser {
  * Archivo de video en diferentes calidades
  */
 export interface VideoFile {
-  id: number;
+  _id: string;
   quality: "hd" | "sd" | "hls";
   file_type: string;
   width: number | null;
@@ -28,7 +28,7 @@ export interface VideoFile {
  * Imágenes de preview del video
  */
 export interface VideoPicture {
-  id: number;
+  _id: string;
   picture: string;
   nr: number;
 }
@@ -37,15 +37,20 @@ export interface VideoPicture {
  * Estructura completa de un video de Pexels
  */
 export interface PexelsVideo {
-  id: number;
+  _id: string;
+  pexelsId?: number; // ID original de Pexels
   width: number;
   height: number;
   url: string;
   image: string;
   duration: number;
   user: PexelsUser;
-  video_files: VideoFile[];
-  video_pictures: VideoPicture[];
+  video_files?: VideoFile[]; // Opcional porque el backend podría no enviarlo
+  video_pictures?: VideoPicture[]; // Opcional porque el backend podría no enviarlo
+  likesCount?: number; // Contador de likes del backend
+  createdAt?: string; // Fecha de creación en el backend
+  updatedAt?: string; // Fecha de actualización en el backend
+  __v?: number; // Versión de MongoDB
 }
 
 /**

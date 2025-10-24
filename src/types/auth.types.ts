@@ -10,12 +10,14 @@
  * @property {string} name - Nombre completo del usuario
  * @property {string} email - Email del usuario (usado para login)
  * @property {number} age - Edad del usuario
+ * @property {string[]} moviesLiked - Array de IDs de videos que le gustan al usuario
  */
 export interface User {
   id: string;
   name: string;
   email: string;
   age: number;
+  moviesLiked?: string[]; // Opcional para retrocompatibilidad
 }
 
 /**

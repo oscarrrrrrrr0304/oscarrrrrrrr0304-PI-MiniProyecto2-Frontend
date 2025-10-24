@@ -75,6 +75,7 @@ export const authService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
+    
     return handleResponse(response);
   },
 
@@ -110,6 +111,7 @@ export const authService = {
       method: "GET",
       headers: getAuthHeaders(),
     });
+    
     return handleResponse(response);
   },
 
@@ -179,9 +181,9 @@ export const authService = {
    * @example
    * await authService.changePassword('user-id-123', { currentPassword: 'old123', newPassword: 'new456' });
    */
-  async changePassword(userId: string, data: ChangePasswordData): Promise<{ message: string }> {
-    const response = await fetch(`${API_URL}/users/${userId}/password`, {
-      method: "PUT",
+  async changePassword( data: ChangePasswordData): Promise<{ message: string }> {
+    const response = await fetch(`${API_URL}/auth/change-password`, {
+      method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });

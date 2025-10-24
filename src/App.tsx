@@ -20,6 +20,7 @@ import SearchPage from "./pages/SearchPage";
 import LikedPage from "./pages/LikedPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import SiteMapPage from "./pages/SiteMapPage";
+import VideoPage from "./pages/VideoPage";
 
 /**
  * Componente raíz de la aplicación
@@ -37,6 +38,7 @@ import SiteMapPage from "./pages/SiteMapPage";
  * 
  * Rutas protegidas (requieren autenticación):
  * - /home - Página principal con carruseles de videos
+ * - /video/:videoId - Página de detalle de video con reproductor
  * - /profile - Perfil de usuario
  * - /search - Búsqueda y filtrado de videos
  * - /liked - Videos marcados como favoritos
@@ -106,6 +108,16 @@ const App: React.FC = () => {
               <ProtectedRoute>
                 <Layout>
                   <HomePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/video/:videoId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <VideoPage />
                 </Layout>
               </ProtectedRoute>
             }

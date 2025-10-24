@@ -6,10 +6,14 @@
  */
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
 import useUserStore from "../stores/useUserStore";
 import { validatePassword } from "../utils/validators";
+import VideoCard from "../components/VideoCard";
+import { pexelsService } from "../services/pexels.service";
+import type { PexelsVideo } from "../types/pexels.types";
 
 /**
  * Componente de la página de perfil de usuario
@@ -21,6 +25,7 @@ import { validatePassword } from "../utils/validators";
  * @description
  * Características principales:
  * - Vista de información del perfil (nombre, email, edad)
+ * - Sección de "Me Gusta" recientes (últimos 4 videos)
  * - Modal de edición de perfil
  * - Cambio de contraseña con validación
  * - Confirmación de eliminación de cuenta
@@ -45,11 +50,17 @@ import { validatePassword } from "../utils/validators";
  */
 const ProfilePage: React.FC = () => {
   const { user, updateUser, deleteAccount, logout, changePassword, isLoading } = useUserStore();
+  const navigate = useNavigate();
 
   // Estados para los modales
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  // Estados para los videos con "Me Gusta" recientes
+  const [recentLikedVideos, setRecentLikedVideos] = useState<PexelsVideo[]>([]);
+  const [loadingVideos, setLoadingVideos] = useState(true);
 
   // Estados para el formulario de edición
   const [editData, setEditData] = useState({
@@ -60,7 +71,6 @@ const ProfilePage: React.FC = () => {
   });
 
   // Estados para cambio de contraseña
-  const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -87,58 +97,50 @@ const ProfilePage: React.FC = () => {
   }, [user]);
 
   /**
+   * Effect: Carga los 4 "Me Gusta" más recientes del usuario
+   * Se ejecuta cuando cambia el array moviesLiked
+   */
+  useEffect(() => {
+    const loadRecentLikedVideos = async () => {
+      try {
+        setLoadingVideos(true);
+
+        // Verificar si el usuario tiene videos con "Me Gusta"
+        if (!user?.moviesLiked || user.moviesLiked.length === 0) {
+          setRecentLikedVideos([]);
+          setLoadingVideos(false);
+          return;
+        }
+
+        // Obtener los últimos 4 IDs (los más recientes están al final del array)
+        const recentIds = user.moviesLiked.slice(-4).reverse(); // Últimos 4 en orden inverso
+
+        // Cargar cada video por su ID
+        const videoPromises = recentIds.map((videoId) =>
+          pexelsService.getVideoById(videoId)
+        );
+
+        const videos = await Promise.all(videoPromises);
+        setRecentLikedVideos(videos);
+      } catch (err) {
+        console.error("Error al cargar videos recientes con Me Gusta:", err);
+        setRecentLikedVideos([]);
+      } finally {
+        setLoadingVideos(false);
+      }
+    };
+
+    loadRecentLikedVideos();
+  }, [user?.moviesLiked]);
+
+  /**
    * Maneja la actualización del perfil
-   * Incluye cambio de contraseña si está activado
    * 
    * @async
-   * @throws {Error} Si la actualización falla o las contraseñas no coinciden
+   * @throws {Error} Si la actualización falla
    */
   const handleUpdateProfile = async () => {
     try {
-      // Si se está cambiando la contraseña
-      if (showPasswordChange) {
-        // Validar que las contraseñas no estén vacías
-        if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmNewPassword) {
-          alert("Por favor, completa todos los campos de contraseña");
-          return;
-        }
-
-        // Validar que las contraseñas coincidan
-        if (passwordData.newPassword !== passwordData.confirmNewPassword) {
-          alert("Las contraseñas nuevas no coinciden");
-          return;
-        }
-
-        // Validar que la nueva contraseña cumpla los requisitos
-        const passwordValidation = validatePassword(passwordData.newPassword);
-        if (!passwordValidation.isValid) {
-          alert(`La nueva contraseña no cumple los requisitos:\n${passwordValidation.errors.join("\n")}`);
-          return;
-        }
-
-        // Cambiar contraseña
-        try {
-          await changePassword({
-            currentPassword: passwordData.currentPassword,
-            newPassword: passwordData.newPassword,
-          });
-          
-          // Limpiar campos de contraseña
-          setPasswordData({
-            currentPassword: "",
-            newPassword: "",
-            confirmNewPassword: "",
-          });
-          setShowPasswordChange(false);
-          alert("Contraseña actualizada correctamente");
-        } catch (passwordError) {
-          console.error("Error al cambiar contraseña:", passwordError);
-          const errorMessage = passwordError instanceof Error ? passwordError.message : "Error al cambiar la contraseña";
-          alert(errorMessage);
-          return; // No continuar con la actualización del perfil si falla el cambio de contraseña
-        }
-      }
-
       // Actualizar perfil
       await updateUser(editData);
       setShowEditModal(false);
@@ -146,6 +148,54 @@ const ProfilePage: React.FC = () => {
     } catch (error) {
       console.error("Error al actualizar perfil:", error);
       alert("Error al actualizar el perfil. Por favor, intenta de nuevo.");
+    }
+  };
+
+  /**
+   * Maneja el cambio de contraseña de forma independiente
+   * 
+   * @async
+   * @throws {Error} Si el cambio de contraseña falla
+   */
+  const handleChangePassword = async () => {
+    try {
+      // Validar que las contraseñas no estén vacías
+      if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmNewPassword) {
+        alert("Por favor, completa todos los campos de contraseña");
+        return;
+      }
+
+      // Validar que las contraseñas coincidan
+      if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+        alert("Las contraseñas nuevas no coinciden");
+        return;
+      }
+
+      // Validar que la nueva contraseña cumpla los requisitos
+      const passwordValidation = validatePassword(passwordData.newPassword);
+      if (!passwordValidation.isValid) {
+        alert(`La nueva contraseña no cumple los requisitos:\n${passwordValidation.errors.join("\n")}`);
+        return;
+      }
+
+      // Cambiar contraseña
+      await changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+      
+      // Limpiar campos de contraseña y cerrar modal
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+      setShowPasswordModal(false);
+      alert("Contraseña actualizada correctamente");
+    } catch (passwordError) {
+      console.error("Error al cambiar contraseña:", passwordError);
+      const errorMessage = passwordError instanceof Error ? passwordError.message : "Error al cambiar la contraseña";
+      alert(errorMessage);
     }
   };
 
@@ -180,10 +230,10 @@ const ProfilePage: React.FC = () => {
     deletePassword.length > 0 && deleteConfirmText === "ELIMINAR";
 
   return (
-    <div className="flex flex-col md:flex-row px-8 mt-20">
+    <div className="flex flex-col md:flex-row px-8 mt-20 gap-8">
       <div className="w-full md:w-1/3 min-h-screen flex flex-col justify-center items-center gap-8">
         <div className="flex flex-col justify-center items-center gap-1">
-          <div className="w-28 h-28 bg-[url('./images/user-image.jpg')] bg-cover bg-center rounded-full"></div>
+          <div className="w-28 h-28 bg-[url('/images/user-image.jpg')] bg-cover bg-center rounded-full"></div>
           <h2 className="text-2xl font-semibold mb-2 text-white text-center">
             {user?.name || "Nombre de Usuario"}
           </h2>
@@ -230,8 +280,58 @@ const ProfilePage: React.FC = () => {
           </span>
         </p>
       </div>
-      <div className="w-full md:w-2/3 min-h-screen flex flex-col justify-center items-center">
-        <p className="text-white">Me gusta recientes</p>
+      <div className="w-full md:w-2/3 min-h-screen flex flex-col justify-center items-center px-4">
+        <div className="w-full max-w-4xl">
+          {/* Header de Me Gusta Recientes */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold text-white">Me Gusta Recientes</h2>
+            {user?.moviesLiked && user.moviesLiked.length > 4 && (
+              <button
+                onClick={() => navigate('/liked')}
+                className="text-lightblue hover:text-blue transition font-semibold"
+              >
+                Ver todos ({user.moviesLiked.length})
+              </button>
+            )}
+          </div>
+
+          {/* Contenido */}
+          {loadingVideos ? (
+            <div className="flex justify-center items-center py-16">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-4 border-lightblue"></div>
+            </div>
+          ) : recentLikedVideos.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <svg
+                className="mb-4 text-white/40"
+                width="64"
+                height="64"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+              </svg>
+              <p className="text-white/70 text-lg text-center">
+                Aún no tienes videos con "Me Gusta"
+              </p>
+              <button
+                onClick={() => navigate('/')}
+                className="mt-4 px-6 py-2 bg-blue text-white rounded hover:bg-lightblue transition"
+              >
+                Explorar videos
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+              {recentLikedVideos.map((video) => (
+                <VideoCard key={video._id} video={video} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
         <div className="flex flex-col gap-4 mb-6 w-full">
@@ -267,55 +367,15 @@ const ProfilePage: React.FC = () => {
             }
           />
           
-          {/* Sección de cambio de contraseña */}
+          {/* Botón para cambio de contraseña */}
           <div className="w-full mt-4">
             <button
               type="button"
-              onClick={() => setShowPasswordChange(!showPasswordChange)}
-              className="text-white font-semibold hover:text-green transition mb-2"
+              onClick={() => setShowPasswordModal(true)}
+              className="text-white font-semibold hover:text-green transition"
             >
-              {showPasswordChange ? "Cancelar cambio de contraseña" : "¿Deseas cambiar tu contraseña?"}
+              ¿Deseas cambiar tu contraseña?
             </button>
-            
-            {showPasswordChange && (
-              <div className="flex flex-col gap-3 mt-2">
-                <Input
-                  type="password"
-                  id="currentPassword"
-                  label="Contraseña actual"
-                  placeholder="Ingresa tu contraseña actual"
-                  value={passwordData.currentPassword}
-                  onChange={(e) =>
-                    setPasswordData({ ...passwordData, currentPassword: e.target.value })
-                  }
-                />
-                <div>
-                  <Input
-                    type="password"
-                    id="newPassword"
-                    label="Nueva contraseña"
-                    placeholder="Ingresa tu nueva contraseña"
-                    value={passwordData.newPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, newPassword: e.target.value })
-                    }
-                  />
-                  <p className="text-xs text-white/70 mt-1">
-                    Mínimo 8 caracteres, una mayúscula, un número y un carácter especial
-                  </p>
-                </div>
-                <Input
-                  type="password"
-                  id="confirmNewPassword"
-                  label="Confirmar nueva contraseña"
-                  placeholder="Confirma tu nueva contraseña"
-                  value={passwordData.confirmNewPassword}
-                  onChange={(e) =>
-                    setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })
-                  }
-                />
-              </div>
-            )}
           </div>
           
           <div className="w-full h-fit flex flex-col gap-1"></div>
@@ -331,7 +391,81 @@ const ProfilePage: React.FC = () => {
           <button
             onClick={() => {
               setShowEditModal(false);
-              setShowPasswordChange(false);
+            }}
+            className="flex-1 bg-gray-600 text-white py-3 rounded font-semibold hover:bg-gray-700 transition"
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
+
+      {/* Modal de Cambio de Contraseña */}
+      <Modal
+        isOpen={showPasswordModal}
+        onClose={() => {
+          setShowPasswordModal(false);
+          setPasswordData({
+            currentPassword: "",
+            newPassword: "",
+            confirmNewPassword: "",
+          });
+        }}
+      >
+        <div className="flex flex-col gap-4 mb-6 w-full">
+          <h3 className="text-2xl text-white font-semibold text-center mb-4">
+            Cambiar Contraseña
+          </h3>
+          
+          <Input
+            type="password"
+            id="currentPassword"
+            label="Contraseña actual"
+            placeholder="Ingresa tu contraseña actual"
+            value={passwordData.currentPassword}
+            onChange={(e) =>
+              setPasswordData({ ...passwordData, currentPassword: e.target.value })
+            }
+          />
+          
+          <div>
+            <Input
+              type="password"
+              id="newPassword"
+              label="Nueva contraseña"
+              placeholder="Ingresa tu nueva contraseña"
+              value={passwordData.newPassword}
+              onChange={(e) =>
+                setPasswordData({ ...passwordData, newPassword: e.target.value })
+              }
+            />
+            <p className="text-xs text-white/70 mt-1">
+              Mínimo 8 caracteres, una mayúscula, un número y un carácter especial
+            </p>
+          </div>
+          
+          <Input
+            type="password"
+            id="confirmNewPassword"
+            label="Confirmar nueva contraseña"
+            placeholder="Confirma tu nueva contraseña"
+            value={passwordData.confirmNewPassword}
+            onChange={(e) =>
+              setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })
+            }
+          />
+        </div>
+        
+        <div className="flex gap-4 w-full">
+          <button
+            onClick={handleChangePassword}
+            disabled={isLoading}
+            className="flex-1 bg-green text-white py-3 rounded font-semibold hover:bg-green-600 transition disabled:opacity-50"
+          >
+            {isLoading ? "Cambiando..." : "Cambiar contraseña"}
+          </button>
+          <button
+            onClick={() => {
+              setShowPasswordModal(false);
               setPasswordData({
                 currentPassword: "",
                 newPassword: "",

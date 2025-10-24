@@ -1,19 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import type { PexelsVideo } from "../types/pexels.types";
 
 /**
  * Props para el componente VideoCard
  * @typedef {Object} VideoCardProps
  * @property {PexelsVideo} video - Objeto de video de Pexels con toda la información del video
- * @property {Function} [onVideoClick] - Callback opcional que se ejecuta cuando se hace click en el video
  */
 interface VideoCardProps {
   video: PexelsVideo;
-  onVideoClick?: (video: PexelsVideo) => void;
 }
 
 /**
  * Componente que muestra una tarjeta de video con información básica
  * Incluye imagen de preview, autor, duración, y métricas de interacción
+ * Al hacer click en la tarjeta, navega a la página de detalle del video
  * 
  * @component
  * @param {VideoCardProps} props - Props del componente
@@ -21,21 +21,18 @@ interface VideoCardProps {
  * 
  * @example
  * ```tsx
- * <VideoCard 
- *   video={pexelsVideo} 
- *   onVideoClick={(video) => console.log('Video clicked:', video)}
- * />
+ * <VideoCard video={pexelsVideo} />
  * ```
  */
-const VideoCard: React.FC<VideoCardProps> = ({ video, onVideoClick }) => {
+const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
+  const navigate = useNavigate();
+
   /**
    * Maneja el evento de click en la tarjeta
-   * Ejecuta el callback onVideoClick si está definido
+   * Navega a la página de detalle del video usando su ID
    */
   const handleClick = () => {
-    if (onVideoClick) {
-    //   onVideoClick(video);
-    }
+    navigate(`/video/${video._id}`);
   };
 
   return (
@@ -79,7 +76,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onVideoClick }) => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-star"
+              className="icon icon-tabler icons-tabler-outline icon-tabler-star stroke-yellow-500"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
@@ -101,7 +98,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onVideoClick }) => {
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
             </svg>
-            <span className="likes-count">0</span>
+            <span className="likes-count">{video.likesCount || 0}</span>
           </p>
         </div>
       </div>

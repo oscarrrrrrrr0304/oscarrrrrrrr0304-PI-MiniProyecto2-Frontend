@@ -12,14 +12,12 @@ import { pexelsService } from "../services/pexels.service";
  * @property {string} [category] - Categoría de videos a buscar (ej: 'entertainment', 'travel')
  * @property {boolean} [isPopular] - Si es true, carga videos populares en lugar de buscar por categoría
  * @property {number} [perPage] - Cantidad de videos a cargar por página (default: 12)
- * @property {Function} onVideoClick - Callback que se ejecuta cuando se hace click en un video
  */
 interface VideosCarouselProps {
   title: string;
   category?: string;
   isPopular?: boolean;
   perPage?: number;
-  onVideoClick: (video: PexelsVideo) => void;
 }
 
 /**
@@ -36,7 +34,6 @@ interface VideosCarouselProps {
  * <VideosCarousel
  *   title="Videos Populares"
  *   isPopular={true}
- *   onVideoClick={(video) => setSelectedVideo(video)}
  * />
  * ```
  * 
@@ -46,7 +43,6 @@ interface VideosCarouselProps {
  *   title="Entretenimiento"
  *   category="entertainment"
  *   perPage={15}
- *   onVideoClick={(video) => openModal(video)}
  * />
  * ```
  */
@@ -55,7 +51,6 @@ const VideosCarousel: React.FC<VideosCarouselProps> = ({
   category,
   isPopular = false,
   perPage = 12,
-  onVideoClick,
 }) => {
   const [videos, setVideos] = useState<PexelsVideo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,9 +135,8 @@ const VideosCarousel: React.FC<VideosCarouselProps> = ({
           >
             {videos.map((video) => (
               <VideoCard
-                key={video.id}
+                key={video._id}
                 video={video}
-                onVideoClick={onVideoClick}
               />
             ))}
           </div>

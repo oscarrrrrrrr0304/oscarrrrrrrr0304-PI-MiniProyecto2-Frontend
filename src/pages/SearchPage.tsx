@@ -8,7 +8,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import VideoCard from "../components/VideoCard";
-import VideoPlayerModal from "../components/VideoPlayerModal";
 import { pexelsService } from "../services/pexels.service";
 import type { PexelsVideo } from "../types/pexels.types";
 
@@ -29,7 +28,7 @@ import type { PexelsVideo } from "../types/pexels.types";
  * - Layout flex-wrap responsive
  * - Scroll reset al cambiar de categoría
  * - Videos populares por defecto si no hay filtro
- * - Modal de reproducción de videos
+ * - Click en video navega a la página de detalle
  * 
  * Estados gestionados:
  * - activeFilter: Categoría actual desde URL params
@@ -64,8 +63,6 @@ const SearchPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedVideo, setSelectedVideo] = useState<PexelsVideo | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const observer = useRef<IntersectionObserver | null>(null);
   
@@ -147,25 +144,6 @@ const SearchPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  /**
-   * Maneja el click en un video
-   * Abre el modal de reproducción
-   * @param {PexelsVideo} video - Video seleccionado
-   */
-  const handleVideoClick = (video: PexelsVideo) => {
-    setSelectedVideo(video);
-    setIsModalOpen(true);
-  };
-
-  /**
-   * Cierra el modal de reproducción
-   * Limpia el video seleccionado
-   */
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedVideo(null);
   };
 
   /**
@@ -273,16 +251,15 @@ const SearchPage: React.FC = () => {
         {videos.map((video, index) => {
           if (videos.length === index + 1) {
             return (
-              <div key={video.id} ref={lastVideoElementRef}>
-                <VideoCard video={video} onVideoClick={handleVideoClick} />
+              <div key={video._id} ref={lastVideoElementRef}>
+                <VideoCard video={video} />
               </div>
             );
           } else {
             return (
               <VideoCard
-                key={video.id}
+                key={video._id}
                 video={video}
-                onVideoClick={handleVideoClick}
               />
             );
           }
@@ -323,13 +300,6 @@ const SearchPage: React.FC = () => {
           No se encontraron videos en esta categoría
         </div>
       )}
-
-      {/* Video Player Modal */}
-      <VideoPlayerModal
-        video={selectedVideo}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
     </div>
   );
 };

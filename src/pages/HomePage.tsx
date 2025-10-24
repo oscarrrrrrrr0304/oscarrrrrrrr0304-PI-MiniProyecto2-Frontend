@@ -5,15 +5,12 @@
  * @module HomePage
  */
 
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import VideosCarousel from "../components/VideosCarousel";
-import VideoPlayerModal from "../components/VideoPlayerModal";
-import type { PexelsVideo } from "../types/pexels.types";
 
 /**
  * Componente de la página principal
- * Renderiza carruseles de videos por categoría y un modal de reproducción
+ * Renderiza carruseles de videos por categoría
  * 
  * @component
  * @returns {JSX.Element} Página de inicio con carruseles de videos
@@ -22,7 +19,7 @@ import type { PexelsVideo } from "../types/pexels.types";
  * Características principales:
  * - 8 categorías de videos: Populares, Entretenimiento, Viajes, Música, Moda, Videojuegos, Tecnología, Deportes
  * - Cada categoría tiene su propio carrusel horizontal
- * - Click en video abre modal de reproducción
+ * - Click en video navega a la página de detalle del video
  * - Footer con enlaces a Sobre Nosotros y Mapa del Sitio
  * - Diseño responsive con padding y espaciado adaptativo
  * 
@@ -37,27 +34,6 @@ import type { PexelsVideo } from "../types/pexels.types";
  * ```
  */
 const HomePage: React.FC = () => {
-  const [selectedVideo, setSelectedVideo] = useState<PexelsVideo | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  /**
-   * Maneja el click en un video
-   * Abre el modal de reproducción con el video seleccionado
-   * @param {PexelsVideo} video - Video a reproducir
-   */
-  const handleVideoClick = (video: PexelsVideo) => {
-    setSelectedVideo(video);
-    setIsModalOpen(true);
-  };
-
-  /**
-   * Cierra el modal de reproducción
-   * Limpia el video seleccionado del estado
-   */
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedVideo(null);
-  };
 
   /**
    * Configuración de categorías de videos
@@ -95,17 +71,9 @@ const HomePage: React.FC = () => {
             category={cat.category}
             isPopular={cat.isPopular}
             perPage={12}
-            onVideoClick={handleVideoClick}
           />
         ))}
       </div>
-
-      {/* Video Player Modal */}
-      <VideoPlayerModal
-        video={selectedVideo}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
 
       {/* Footer */}
       <footer className="py-6">

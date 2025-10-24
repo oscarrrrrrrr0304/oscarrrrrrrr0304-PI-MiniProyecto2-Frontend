@@ -21,7 +21,7 @@ import type {
 /**
  * Interface del estado de autenticación
  * @interface AuthState
- * @property {User | null} user - Usuario autenticado actual, null si no hay sesión
+ * @property {User | null} user - Usuario autenticado actual (incluye id, name, email, age, moviesLiked), null si no hay sesión
  * @property {string | null} token - Token JWT de autenticación
  * @property {boolean} isAuthenticated - Estado de autenticación del usuario
  * @property {boolean} isLoading - Indica si hay una operación en progreso
@@ -115,6 +115,14 @@ interface AuthState {
    * @returns {void}
    */
   setUser: (user: User) => void;
+  
+  /**
+   * Actualiza el array de videos favoritos del usuario
+   * Optimizado para evitar re-renders innecesarios
+   * @param {string[]} moviesLiked - Array actualizado de IDs de videos favoritos
+   * @returns {void}
+   */
+  updateMoviesLiked: (moviesLiked: string[]) => void;
 }
 
 /**
@@ -149,6 +157,10 @@ const useUserStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const response = await authService.login(credentials);
+          
+          console.log('✓ Login exitoso -', response.user.name);
+          console.log('Videos favoritos:', response.user.moviesLiked?.length || 0);
+          
           localStorage.setItem("token", response.token);
           set({
             user: response.user,
@@ -254,12 +266,13 @@ const useUserStore = create<AuthState>()(
           const updatedUser = await authService.updateUser(userId, data);
           
           // Crear un nuevo objeto de usuario con los datos actualizados
-          // Usamos los datos del backend si existen, sino mantenemos los actuales
+          // Mantener moviesLiked y otros campos que no se actualizan
           const newUserData: User = {
             id: userId,
             name: updatedUser.name ?? data.name ?? currentUser.name,
             email: updatedUser.email ?? data.email ?? currentUser.email,
             age: updatedUser.age ?? data.age ?? currentUser.age,
+            moviesLiked: updatedUser.moviesLiked ?? currentUser.moviesLiked, // Preservar moviesLiked
           };
           
           // Actualizar el estado con un nuevo objeto para forzar la re-renderización
@@ -289,7 +302,7 @@ const useUserStore = create<AuthState>()(
 
         set({ isLoading: true, error: null });
         try {
-          await authService.changePassword(userId, data);
+          await authService.changePassword(data);
           set({
             isLoading: false,
             error: null,
@@ -347,7 +360,8 @@ const useUserStore = create<AuthState>()(
 
         // Si ya hay un usuario en el estado (de la persistencia), no hacer nada
         if (state.user && state.isAuthenticated) {
-          console.log("Usuario ya autenticado desde persistencia:", state.user);
+          console.log("✓ Usuario autenticado -", state.user.name);
+          console.log("Videos favoritos:", state.user.moviesLiked?.length || 0);
           set({ isLoading: false });
           return;
         }
@@ -355,6 +369,10 @@ const useUserStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const user = await authService.verifyToken();
+          
+          console.log('✓ Token verificado -', user.name);
+          console.log('Videos favoritos:', user.moviesLiked?.length || 0);
+          
           set({
             user,
             token,
@@ -383,6 +401,22 @@ const useUserStore = create<AuthState>()(
       // Utilidades
       clearError: () => set({ error: null }),
       setUser: (user: User) => set({ user }),
+      
+      /**
+       * Actualiza solo el array moviesLiked sin afectar otros campos
+       * Optimizado para evitar re-renders del componente VideoPage
+       */
+      updateMoviesLiked: (moviesLiked: string[]) => {
+        const state = useUserStore.getState();
+        if (state.user) {
+          set({
+            user: {
+              ...state.user,
+              moviesLiked
+            }
+          });
+        }
+      },
     }),
     {
       name: "user-storage", // nombre en localStorage

@@ -78,19 +78,29 @@ const HomePage: React.FC = () => {
       {/* Footer */}
       <footer className="py-6">
         <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center gap-8">
+          <div className="flex justify-center items-center gap-8 flex-wrap">
             <Link
               to="/about"
-              className="text-white hover:text-lightblue transition-colors text-lg"
+              className="text-white hover:text-green transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-lightblue rounded px-2 py-1"
+              aria-label="Ir a página Sobre Nosotros"
             >
               Sobre Nosotros
             </Link>
             <span className="text-white/30">|</span>
             <Link
               to="/sitemap"
-              className="text-white hover:text-lightblue transition-colors text-lg"
+              className="text-white hover:text-green transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-lightblue rounded px-2 py-1"
+              aria-label="Ir a Mapa del Sitio"
             >
               Mapa del Sitio
+            </Link>
+            <span className="text-white/30">|</span>
+            <Link
+              to="/user-manual"
+              className="text-white hover:text-green transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-green rounded px-2 py-1 flex items-center gap-2"
+              aria-label="Ir a Manual de Usuario"
+            >
+              Manual de Usuario
             </Link>
           </div>
         </div>
